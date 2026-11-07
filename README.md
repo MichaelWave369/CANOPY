@@ -56,6 +56,12 @@ Proposed placements are rejected when they overlap protected diagram zones, leav
 
 The results show indicative housing, occupancy, building coverage, rooftop PV, annual electrical use, domestic-only water consumption and straight-line distances to three proposed tram stops. Export versioned **unpermitted JSON** locally. There is no GIS, real neighborhood, legal setback, walking network, actual utility study, construction cost, or certified buildability. See [District Composer methodology](docs/DISTRICT-COMPOSER.md).
 
+## Mission Five: Living Neighborhood
+
+The **Living Neighborhood** panel inside **Districts** uses the *same edited neighborhood layout*, not a second model. It adds a synthetic **20 m walking network** avoiding conceptual ecological, farmland and building obstructions; model routes from selected buildings to transit, school, clinic, food hub and commons; and compares capacity assumptions against residents. Emergency access is a distance **warning proxy only**, not a fire-lane design.
+
+A phased low/high construction cost sensitivity model uses openly documented **invented USD unit rates**, not actual quotations or a project budget. Change school, clinic, civic-room capacity and the cost multiplier. Export a complete **`canopy.neighborhood.v1` fictional scenario** as local JSON. See [methods, limitations and evidence gates](docs/LIVING-NEIGHBORHOOD.md).
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
@@ -66,6 +72,7 @@ The results show indicative housing, occupancy, building coverage, rooftop PV, a
 - [Living Atlas](docs/ATLAS.md): normalized reference site overlays, sampling, field-data requirements
 - [Architectural Blueprint Studio](docs/BLUEPRINT-STUDIO.md): typologies, conceptual geometry, roof assumptions and evidence gates
 - [District Composer](docs/DISTRICT-COMPOSER.md): multi-building neighborhood composition, constraints, infrastructure assumptions and provenance
+- [Living Neighborhood](docs/LIVING-NEIGHBORHOOD.md): synthetic routed walks, service demand/capacity, emergency access proxies and capital sensitivity
 
 ## Principles
 
