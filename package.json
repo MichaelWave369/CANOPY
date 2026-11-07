@@ -1,0 +1,20 @@
+{
+  "name": "canopy-symbiotic-city",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Open-source architectural explorer for the CANOPY symbiotic city",
+  "scripts": {
+    "dev": "vite",
+    "test": "node --test",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0"
+  }
+}
