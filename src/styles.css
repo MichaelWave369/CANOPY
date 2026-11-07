@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+
+:root{
+  font-family:'DM Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  color:#e9f1e8;background:#081d17;font-synthesis:none;text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;--ink:#112c22;--forest:#4e8460;--mint:#a8ceb0;--gold:#dbb879;--blue:#70afad;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-width:320px}
+button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration:none}button{font:inherit}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.app-shell{overflow:hidden}.site-header,.hero,.stat-strip,.section,footer{max-width:1440px;margin-inline:auto}
+.site-header{min-height:85px;padding:0 5.2%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #294439}
+.brand{display:flex;align-items:center;gap:11px;font-size:24px;font-weight:700;letter-spacing:.11em}
+.brand-symbol{width:44px;height:44px;flex:none}.brand-period{color:var(--gold)}
+.site-header nav{display:flex;align-items:center;gap:35px;color:#bed0c4;font-size:13px;letter-spacing:.02em}
+.site-header nav a:hover,.secondary-link:hover,footer a:hover{color:var(--gold)}
+.nav-github{border:1px solid #587267;padding:11px 19px;border-radius:100px}
+.hero{padding:112px 5.2% 95px;display:grid;grid-template-columns:1.13fr .87fr;align-items:center;gap:60px}
+.eyebrow{color:var(--gold);text-transform:uppercase;font-size:11px;font-weight:700;letter-spacing:.21em}
+.eyebrow.dark{color:#4e7060}.hero-eyebrow{display:flex;align-items:center;gap:15px}.eyebrow-line{display:inline-block;width:37px;height:1px;background:var(--gold)}
+.hero h1,.section h2,.end-panel h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;letter-spacing:-.035em;line-height:.99}
+.hero h1{font-size:clamp(64px,6.7vw,106px);max-width:660px;margin:28px 0 26px}
+.hero h1 em,.section h2 em,.end-panel h2 em{color:#afd5af;font-weight:400}
+.hero-lead{max-width:610px;color:#b8cac1;line-height:1.8;font-size:17px;margin-bottom:33px}
+.hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:26px}
+.primary-link{display:inline-flex;align-items:center;justify-content:space-between;gap:32px;background:var(--gold);color:#183326;font-size:13px;font-weight:700;padding:17px 24px;border-radius:3px;transition:transform .2s,background .2s}
+.primary-link:hover{transform:translateY(-2px);background:#efcf8e}
+.primary-link.light{background:#e3eccf}.secondary-link{color:#d9e4dc;font-size:13px}
+.acronym-line{font-size:11px;color:#8caa99;margin-top:46px;letter-spacing:.08em}
+.hero-aside{height:485px;max-width:560px;width:100%;justify-self:end;position:relative;background:radial-gradient(circle at 50% 46%,#1d4835 0%,#102a20 46%,#0a2119 68%);border:1px solid #365745;border-radius:50%}
+.orbit{position:absolute;inset:11%;border:1px solid #41674f;border-radius:50%}.orbit-2{inset:23%;border-style:dashed;border-color:#577b5a}.orbit-3{inset:-7%;border-color:#2b4d3b}
+.hero-aside:before,.hero-aside:after{content:'';position:absolute;width:14px;height:14px;background:var(--gold);border-radius:50%;top:17%;left:17%;box-shadow:230px 265px 0 -3px #b5d8af}
+.hero-aside:after{width:7px;height:7px;left:80%;top:78%;background:#b5d8af;box-shadow:none}
+.hero-center{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;text-align:center}
+.hero-center .brand-symbol{width:91px;height:91px}.hero-center p{color:#c4d9c4;font-size:12px;line-height:2.2;letter-spacing:.24em;font-weight:700}
+.hero-stamp{position:absolute;bottom:1%;right:-7%;background:#dfc38c;color:#203628;padding:13px 20px;font-size:10px;font-weight:700;letter-spacing:.18em;transform:rotate(-5deg)}
+.stat-strip{padding:34px 5.2% 41px;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #2c473b;border-bottom:1px solid #2c473b}
+.stat-strip>div{padding:7px 25px;border-right:1px solid #3b584c}.stat-strip>div:first-child{padding-left:0}.stat-strip>div:last-child{border:0}
+.stat-strip strong{display:block;font-size:40px;font-weight:500;letter-spacing:-.05em;color:#f1e4c1}.stat-strip small{font-size:18px}
+.stat-strip span{display:block;color:#8fb0a0;font-size:12px;margin-top:7px}
+.section{padding:118px 5.2%}.section-intro{display:grid;grid-template-columns:1fr 340px;gap:80px;align-items:end;margin-bottom:55px}
+.section-intro>.eyebrow{grid-column:1/-1}
+.section h2{font-size:clamp(50px,5.2vw,75px);margin:0}
+.section-intro p{font-size:15px;line-height:1.9;color:#abc3b4;margin:0}
+.section-site{background:#edf1e5;color:#18392b;max-width:none}.section-site>.section-intro,.section-site>.explorer-grid,.section-site>.land-budget{max-width:1288px;margin-left:auto;margin-right:auto}
+.section-site h2 em{color:#66916b}.section-site .section-intro p{color:#5c7465}
+.explorer-grid{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(295px,.8fr);gap:22px;align-items:stretch}
+.map-container{background:#fbfaf0;border:1px solid #b7c8ba;padding:17px 17px 10px;border-radius:6px}
+.map-topline{display:flex;align-items:center;justify-content:space-between;padding:5px 10px 13px}
+.map-scale{font-size:11px;color:#6f8376}.map-canvas{width:100%;position:relative;aspect-ratio:1000 / 690}
+.site-art{display:block;width:100%;height:100%;border-radius:7px}
+.greenway{stroke:#608e64;opacity:.24}
+.district-button{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;border-radius:50%;border:2px solid #faf4e1;background:#294d38;color:#fff8e9;width:39px;height:39px;cursor:pointer;font-size:13px;font-weight:700;box-shadow:0 3px 0 #9fb19b;transition:scale .15s,background .15s}
+.district-button:hover{scale:1.13}.district-button.is-active{background:#dbb879;color:#143725;border-color:#143725;scale:1.22;z-index:1}
+.map-caption{color:#53705e;font-size:11px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:15px 8px}
+.legend-dot{display:inline-block;background:#dbb879;width:11px;height:11px;border-radius:50%;margin-left:8px}
+.line-symbol{display:inline-block;background:#d3b278;width:20px;height:4px;border-radius:3px;margin-left:8px}
+.water-symbol{display:inline-block;background:#70afad;width:18px;height:5px;border-radius:3px;margin-left:8px}
+.district-card{background:#11392f;color:#e5f2e6;padding:33px;display:flex;flex-direction:column;border-radius:6px;min-height:470px}
+.card-rule{display:flex;justify-content:space-between;color:#adcabb;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.district-card h3{font-family:'DM Serif Display',Georgia,serif;font-size:48px;font-weight:400;line-height:1.04;margin:59px 0 15px}
+.district-role{font-size:15px;color:#b0dac0!important;line-height:1.55!important}
+.district-card p{font-size:14px;color:#bfd2c7;line-height:1.78}
+.detail-divider{height:1px;background:#386c59;margin:23px 0}
+.detail-label{font-size:10px;letter-spacing:.18em;font-weight:700;color:#9dc39e}
+.district-note{margin-top:auto;font-size:11px;line-height:1.7;color:#a1bdac;border-top:1px solid #386c59;padding-top:23px}
+.land-budget{margin-top:53px!important}.budget-title{display:flex;justify-content:space-between;align-items:end;gap:25px}
+.budget-title h3{font-family:'DM Serif Display',Georgia,serif;font-size:36px;font-weight:400;margin:14px 0 25px}
+.budget-title p{max-width:350px;font-size:13px;line-height:1.7;color:#617466}
+.land-bar{display:flex;height:33px;border-radius:4px;overflow:hidden;gap:3px;background:#e7e9df}
+.land-segment{min-width:0}.land-segment.built{background:#d7b577}.land-segment.habitat{background:#467f61}.land-segment.landscape{background:#a5c59b}.land-segment.mobility{background:#6fa5ae}
+.land-legend{display:grid;grid-template-columns:repeat(4,1fr);gap:25px;margin-top:23px}
+.land-legend>div{display:grid;grid-template-columns:13px auto;align-items:start;column-gap:8px;row-gap:7px}.land-key{width:10px;height:10px;display:block;margin-top:4px}
+.land-legend strong{font-size:16px}.land-legend>div>span:last-child{grid-column:2;font-size:12px;color:#52715f}
+.section-systems{background:#092119}.systems-layout{display:grid;grid-template-columns:.85fr 1.15fr;border:1px solid #3c5d4a;min-height:410px}
+.system-list{border-right:1px solid #3c5d4a}
+.system-choice{width:100%;display:flex;align-items:center;gap:22px;text-align:left;background:none;border:0;border-bottom:1px solid #284637;color:#cfdfd2;min-height:81px;cursor:pointer;padding:15px 25px}
+.system-choice:last-child{border-bottom:0}.system-choice.is-active,.system-choice:hover{background:#244936;color:#fff}
+.system-index{font-size:11px;color:#c5a56e;letter-spacing:.06em}.system-arrow{margin-left:auto;color:#b6d4bd;font-size:20px}
+.system-content{padding:50px 55px;display:flex;flex-direction:column;justify-content:center}
+.system-content h3{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(31px,3vw,46px);font-weight:400;line-height:1.2;margin:18px 0}
+.system-content>p{font-size:15px;line-height:1.85;color:#b7cfc0}
+.evidence{background:#15392b;border-left:3px solid #d1ad70;padding:18px 23px;margin-top:14px}
+.evidence p{font-size:13px;line-height:1.75;color:#d2dfd0;margin:9px 0 0}
+.section-evidence{background:#112b22}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+.metric-card{background:#193b2e;padding:32px;min-height:298px;border:1px solid #41604b;display:flex;flex-direction:column}
+.metric-kicker{color:#b5cfae;letter-spacing:.15em;font-size:10px;font-weight:700}
+.metric-card strong{font-size:56px;letter-spacing:-.055em;font-weight:500;color:#f1deb3;margin:30px 0 12px}
+.metric-card small{font-size:21px}.metric-card p{font-size:13px;line-height:1.8;color:#b2c8b9;margin:0}
+.truth-banner{display:flex;gap:27px;align-items:center;border-top:1px solid #53705c;padding-top:27px;margin-top:36px}
+.truth-chip{white-space:nowrap;background:#b1b888;color:#102b20;padding:9px 13px;font-size:10px;letter-spacing:.1em;font-weight:700}
+.truth-banner p{font-size:13px;line-height:1.8;color:#b7cebd}
+.section-roadmap{background:#f2efe4;color:#1e3c2d}
+.section-roadmap h2 em{color:#6d9370}.section-roadmap .section-intro p{color:#5f7666}
+.phase-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.phase-card{border-top:2px solid #648d6b;background:#e7e9dc;padding:29px;min-height:295px;display:flex;flex-direction:column}
+.phase-id{font-family:'DM Serif Display',Georgia,serif;font-size:52px;color:#7d9d83}
+.phase-period{font-size:11px;color:#54715b;margin:16px 0 20px}.phase-card h3{font-size:22px;margin:0 0 14px}
+.phase-card p{font-size:13px;color:#556d5b;line-height:1.8;margin:0}
+.end-panel{padding:110px 8%;text-align:center;background:radial-gradient(circle at 50% 50%,#285239,#103122 64%,#081d17);border-top:1px solid #4a7958}
+.end-panel h2{font-size:clamp(52px,6vw,87px);margin:24px auto}.end-panel p{font-size:15px;line-height:1.8;color:#b7ccba;max-width:660px;margin:0 auto 28px}
+footer{padding:30px 5.2%;display:flex;align-items:center;justify-content:space-between;gap:16px;color:#8eaa9a;font-size:11px}
+@media(max-width:1050px){.hero{grid-template-columns:1fr;gap:85px;padding-top:80px}.hero-aside{justify-self:center;max-width:455px;height:455px}.explorer-grid{grid-template-columns:1fr}.district-card{min-height:auto}.district-card h3{margin-top:26px}.section-intro{grid-template-columns:1fr;gap:20px}.section-intro>.eyebrow{grid-column:1}.phase-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.site-header{padding:15px 5%;gap:12px;flex-wrap:wrap}.site-header nav{width:100%;justify-content:space-between;gap:12px;font-size:11px}.nav-github{padding:8px 10px}.brand{font-size:19px}.brand-symbol{width:37px;height:37px}.hero{padding:80px 6% 75px}.hero h1{font-size:60px}.hero-aside{max-width:330px;height:330px}.hero-stamp{font-size:7px;right:0}.hero-center .brand-symbol{width:64px;height:64px}.hero-center p{font-size:9px}.stat-strip{grid-template-columns:repeat(2,1fr);gap:19px}.stat-strip>div{padding:7px 0;border:0}.stat-strip strong{font-size:31px}.section{padding:75px 5%}.section h2{font-size:51px}.map-topline{flex-wrap:wrap;gap:8px}.district-button{width:27px;height:27px;font-size:10px}.map-caption{font-size:9px}.district-card{padding:26px}.land-legend{grid-template-columns:repeat(2,1fr)}.budget-title{display:block}.systems-layout{grid-template-columns:1fr}.system-list{border-right:0}.system-choice{min-height:62px}.system-content{padding:35px 27px}.metric-grid{grid-template-columns:1fr}.metric-card{min-height:auto}.truth-banner{display:block}.truth-banner p{margin-top:18px}.phase-grid{grid-template-columns:1fr}.phase-card{min-height:auto}footer{flex-direction:column;align-items:flex-start}.hero-actions{align-items:flex-start;flex-direction:column}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition-duration:0s!important;animation-duration:0s!important}}
