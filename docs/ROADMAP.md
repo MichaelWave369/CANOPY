@@ -26,6 +26,10 @@ The purpose is to build an evidence-backed reference design and interactive rese
 - [x] Add scenario and atlas JSON exports with explicit synthetic provenance
 - [x] Add a conceptual building geometry engine, four template typologies, 2D plan/section drawings, roof program, housing and PV estimates
 - [x] Add concept-labeled building JSON and SVG exports plus browser-printable planning sheet
+- [x] Add district-scale composition with four canonical building types, protected-space collisions, six district study contexts and versioned export
+- [x] Aggregate concept-level housing, building area, rooftop solar, electric demand, domestic water and straight-line stop proxies
+- [ ] Add a navigable accessible walking network, local-service capacity, stormwater and water/waste utility corridor planning
+- [ ] Develop cost/phasing scenarios with uncertainty for one small pilot-quarter concept
 - [ ] Add professional review of floor/corridor/egress logic, GIS placement and 3D BIM/CAD geometry
 - [ ] Add accessible, spatially accurate and professionally validated construction planning sheets and reproducible real-world GIS exports
 - [ ] Conduct privacy threat modeling, engineering reviews and community workshops

@@ -48,6 +48,14 @@ Use **Blueprints** in the React explorer to design from four editable conceptual
 
 Export **concept-labeled JSON**, download a standalone **schematic SVG plan**, or print a **two-part architectural planning sheet**. These are architectural ideation artifacts, **not permits, certified drawings, a real site plan, surveyed dimensions, or code compliance**. See the [Blueprint Studio model and evidence boundaries](docs/BLUEPRINT-STUDIO.md).
 
+## Mission Four: District Composer
+
+Open **Districts** in the CANOPY explorer to arrange the four Blueprint Studio building prototypes onto a fictional **600 × 600 m** neighborhood canvas. Select any of the six district contexts, add blocks to an accessible 7 × 7 location grid, rotate or move them, clear or restore examples, and toggle visual layers for protected habitat, food production, public commons, pedestrian spine, and transit.
+
+Proposed placements are rejected when they overlap protected diagram zones, leave the illustrative study envelope, or violate a schematic 10 m block separation. **Turning off a visual layer does not disable protection.**
+
+The results show indicative housing, occupancy, building coverage, rooftop PV, annual electrical use, domestic-only water consumption and straight-line distances to three proposed tram stops. Export versioned **unpermitted JSON** locally. There is no GIS, real neighborhood, legal setback, walking network, actual utility study, construction cost, or certified buildability. See [District Composer methodology](docs/DISTRICT-COMPOSER.md).
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
@@ -57,6 +65,7 @@ Export **concept-labeled JSON**, download a standalone **schematic SVG plan**, o
 - [Living Systems Lab](docs/SCENARIOS.md): synthetic electricity and water model, assumptions, limitations
 - [Living Atlas](docs/ATLAS.md): normalized reference site overlays, sampling, field-data requirements
 - [Architectural Blueprint Studio](docs/BLUEPRINT-STUDIO.md): typologies, conceptual geometry, roof assumptions and evidence gates
+- [District Composer](docs/DISTRICT-COMPOSER.md): multi-building neighborhood composition, constraints, infrastructure assumptions and provenance
 
 ## Principles
 
