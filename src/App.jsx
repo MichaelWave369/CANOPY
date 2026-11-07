@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ScenarioLab from './ScenarioLab.jsx';
+import LivingAtlas from './LivingAtlas.jsx';
 import { ACRONYM, ASSUMPTIONS, DISTRICTS, LAND_USE, SYSTEMS, PHASES, energyBalanceGWh } from './model.js';
 
 const repoUrl = 'https://github.com/MichaelWave369/CANOPY';
@@ -174,7 +175,7 @@ function App() {
         <a className="brand" href="#home" aria-label="CANOPY home"><BrandMark/><span>CANOPY<span className="brand-period">.</span></span></a>
         <nav aria-label="Primary navigation">
           <a href="#place">The place</a>
-          <a href="#systems">The systems</a><a href="#lab">Living lab</a>
+          <a href="#systems">The systems</a><a href="#atlas">Living atlas</a><a href="#lab">Living lab</a>
           <a href="#evidence">Reality ledger</a>
           <a className="nav-github" href={repoUrl} target="_blank" rel="noreferrer">GitHub ↗</a>
         </nav>
@@ -243,6 +244,8 @@ function App() {
         </section>
 
         <section id="lab" className="section-lab"><ScenarioLab /></section>
+
+        <section id="atlas" className="section-atlas"><LivingAtlas /></section>
 
         <section id="roadmap" className="section section-roadmap">
           <div className="section-intro"><span className="eyebrow">04 / FROM CONCEPT TO EVIDENCE</span><h2>Start with one quarter.<br /><em>Earn the right to scale.</em></h2><p>The first neighborhood is a test of water, ecology, housing and governance. No expansion without audited performance.</p></div>
