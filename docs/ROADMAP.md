@@ -24,7 +24,10 @@ The purpose is to build an evidence-backed reference design and interactive rese
 - [x] Add illustrative riparian buffers and exclusion/review summaries with transparent methods
 - [ ] Add actual surveyed habitat connectivity, flood and wildfire constraints with provenance and signoff
 - [x] Add scenario and atlas JSON exports with explicit synthetic provenance
-- [ ] Add accessible, spatially accurate printable planning sheets and reproducible GIS exports
+- [x] Add a conceptual building geometry engine, four template typologies, 2D plan/section drawings, roof program, housing and PV estimates
+- [x] Add concept-labeled building JSON and SVG exports plus browser-printable planning sheet
+- [ ] Add professional review of floor/corridor/egress logic, GIS placement and 3D BIM/CAD geometry
+- [ ] Add accessible, spatially accurate and professionally validated construction planning sheets and reproducible real-world GIS exports
 - [ ] Conduct privacy threat modeling, engineering reviews and community workshops
 
 ## Physical pilot criteria
