@@ -42,6 +42,12 @@ Use **Living atlas** in the React explorer to inspect the six districts against 
 
 This is **not a real GIS map** and contains no real land, geodetic coordinates or hazard surveys. The [Living Atlas methodology](docs/ATLAS.md) explains the diagram's limitations and the evidence needed before actual site decisions.
 
+## Mission Three: Architectural Blueprint Studio
+
+Use **Blueprints** in the React explorer to design from four editable conceptual building archetypes: Living Courtyard, Terrace Commons, Circular Works Hall and Garden Forum House. Adjust block/courtyard dimensions, story counts, housing and roof allocations, and view schematic ground, typical and roof drawings plus a courtyard section. Explore structural alternatives and see synthetic housing, energy and area results.
+
+Export **concept-labeled JSON**, download a standalone **schematic SVG plan**, or print a **two-part architectural planning sheet**. These are architectural ideation artifacts, **not permits, certified drawings, a real site plan, surveyed dimensions, or code compliance**. See the [Blueprint Studio model and evidence boundaries](docs/BLUEPRINT-STUDIO.md).
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
@@ -50,6 +56,7 @@ This is **not a real GIS map** and contains no real land, geodetic coordinates o
 - [Roadmap](docs/ROADMAP.md): evidence-gated development phases
 - [Living Systems Lab](docs/SCENARIOS.md): synthetic electricity and water model, assumptions, limitations
 - [Living Atlas](docs/ATLAS.md): normalized reference site overlays, sampling, field-data requirements
+- [Architectural Blueprint Studio](docs/BLUEPRINT-STUDIO.md): typologies, conceptual geometry, roof assumptions and evidence gates
 
 ## Principles
 
