@@ -30,12 +30,19 @@ Run locally:
 
 The GitHub Pages workflow builds the app on pushes to main and validates pull requests. The repository may need GitHub Pages configured to deploy from GitHub Actions under Settings → Pages.
 
+## Mission One: Living Systems Laboratory
+
+Use the **Living lab** tab in the React explorer to test synthetic 8,760-hour electricity supply/demand plus battery dispatch and a separate daily water/reuse balance. Choose reference, passive-first, low-supply and drought presets; adjust sliders; inspect grid imports and water supply gaps; download an explicitly synthetic JSON scenario for reproducible discussion.
+
+The modeling code is pure and unit tested, and the UI distinguishes candidate surplus from guaranteed exports. These models are **not site-specific forecasts or regulatory proof**. Read the detailed [methodology and limits](docs/SCENARIOS.md).
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
 - [Decision register](docs/DECISIONS.md): assumptions and explicit design resolutions
 - [Research ledger](docs/RESEARCH-LEDGER.md): baseline technology, pilot studies, speculative proposals and red lines
 - [Roadmap](docs/ROADMAP.md): evidence-gated development phases
+- [Living Systems Lab](docs/SCENARIOS.md): synthetic electricity and water model, assumptions, limitations
 
 ## Principles
 
