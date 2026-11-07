@@ -16,8 +16,10 @@ The purpose is to build an evidence-backed reference design and interactive rese
 - [x] Commit reference land allocation, district identities and assumptions
 - [x] Publish an interactive concept explorer with source/state disclaimers
 - [ ] Add independent geospatial layers for a selected real site
-- [ ] Add a typed, versioned open-ledger schema with provenance/uncertainty
-- [ ] Add selectable water/energy demand scenarios and hourly profiles
+- [x] Add a versioned export contract for explicitly synthetic scenario results
+- [ ] Add validated and typed open-ledger records for observed resources, provenance and uncertainty
+- [x] Add editable synthetic water/energy scenarios and normalized hourly demand/generation profiles
+- [ ] Replace synthetic profiles with verifiable, site-specific hourly weather and consumption datasets
 - [ ] Add habitat connectivity, flood and wildfire constraint overlays
 - [ ] Add accessible printable planning sheets and reproducible exports
 - [ ] Conduct privacy threat modeling, engineering reviews and community workshops
