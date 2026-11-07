@@ -15,13 +15,16 @@ The purpose is to build an evidence-backed reference design and interactive rese
 - [x] Define the canonical acronym and open-source repository
 - [x] Commit reference land allocation, district identities and assumptions
 - [x] Publish an interactive concept explorer with source/state disclaimers
-- [ ] Add independent geospatial layers for a selected real site
+- [x] Add schematic, explicitly un-georeferenced ecological overlays and district-review logic
+- [ ] Add independent authoritative geospatial layers for a selected, consented real site
 - [x] Add a versioned export contract for explicitly synthetic scenario results
 - [ ] Add validated and typed open-ledger records for observed resources, provenance and uncertainty
 - [x] Add editable synthetic water/energy scenarios and normalized hourly demand/generation profiles
 - [ ] Replace synthetic profiles with verifiable, site-specific hourly weather and consumption datasets
-- [ ] Add habitat connectivity, flood and wildfire constraint overlays
-- [ ] Add accessible printable planning sheets and reproducible exports
+- [x] Add illustrative riparian buffers and exclusion/review summaries with transparent methods
+- [ ] Add actual surveyed habitat connectivity, flood and wildfire constraints with provenance and signoff
+- [x] Add scenario and atlas JSON exports with explicit synthetic provenance
+- [ ] Add accessible, spatially accurate printable planning sheets and reproducible GIS exports
 - [ ] Conduct privacy threat modeling, engineering reviews and community workshops
 
 ## Physical pilot criteria

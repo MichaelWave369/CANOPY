@@ -36,6 +36,12 @@ Use the **Living lab** tab in the React explorer to test synthetic 8,760-hour el
 
 The modeling code is pure and unit tested, and the UI distinguishes candidate surplus from guaranteed exports. These models are **not site-specific forecasts or regulatory proof**. Read the detailed [methodology and limits](docs/SCENARIOS.md).
 
+## Mission Two: Living Atlas
+
+Use **Living atlas** in the React explorer to inspect the six districts against illustrative habitat, river-setback, river-edge review, agriculture and transit overlays. Change the synthetic river protection width (40–320 m), compare district proximity conflicts, and export a versioned schematic planning record. The six mandatory site-readiness gates remain explicitly **NOT VERIFIED**.
+
+This is **not a real GIS map** and contains no real land, geodetic coordinates or hazard surveys. The [Living Atlas methodology](docs/ATLAS.md) explains the diagram's limitations and the evidence needed before actual site decisions.
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
@@ -43,6 +49,7 @@ The modeling code is pure and unit tested, and the UI distinguishes candidate su
 - [Research ledger](docs/RESEARCH-LEDGER.md): baseline technology, pilot studies, speculative proposals and red lines
 - [Roadmap](docs/ROADMAP.md): evidence-gated development phases
 - [Living Systems Lab](docs/SCENARIOS.md): synthetic electricity and water model, assumptions, limitations
+- [Living Atlas](docs/ATLAS.md): normalized reference site overlays, sampling, field-data requirements
 
 ## Principles
 
