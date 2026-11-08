@@ -2,11 +2,11 @@ import React,{useMemo,useRef,useState} from 'react';
 import {DISTRICTS} from './model.js';
 import NeighborhoodLab from './NeighborhoodLab.jsx';
 import InfrastructureLab from './InfrastructureLab.jsx';
+import {useWorkspace} from './WorkspaceContext.jsx';
 import {BUILDINGS} from './blueprint.js';
 import {CANVAS,SLOTS,RESERVED,TRANSIT_STOPS,footprint,validatePlacement,composeMetrics,seedLayout,districtExport} from './district.js';
 import './district.css';
 
-const INITIAL=Object.fromEntries(DISTRICTS.map(d=>[d.id,seedLayout(d.id)]));
 const TYPES={
   courtyard:{color:'#8eb7a5',short:'COURT'},
   terrace:{color:'#e0c58f',short:'CIVIC'},
@@ -99,8 +99,9 @@ function Metric({label,value,unit='',note}){
  return <div className="district-metric"><span>{label}</span><strong>{value}<small>{unit}</small></strong><p>{note}</p></div>;
 }
 export default function DistrictComposer(){
- const [districtId,setDistrictId]=useState('garden');
- const [layouts,setLayouts]=useState(INITIAL);
+ const {snapshot,setDistrict:setDistrictId,setDistrictLayout}=useWorkspace();
+ const districtId=snapshot.districtId;
+ const layouts=snapshot.layouts;
  const [tool,setTool]=useState('courtyard');
  const [rotation,setRotation]=useState(0);
  const [selected,setSelected]=useState(null);
@@ -111,11 +112,13 @@ export default function DistrictComposer(){
  const active=layout.find(p=>p.id===selected);
  const metrics=useMemo(()=>composeMetrics(layout),[layout]);
  const district=DISTRICTS.find(d=>d.id===districtId);
- const updateLayout=(next,msg)=>{setLayouts(s=>({...s,[districtId]:next}));setNotice(msg);};
+ const updateLayout=(next,msg)=>{setDistrictLayout(districtId,next);setNotice(msg);};
  function changeDistrict(id){setDistrictId(id);setSelected(null);setNotice('Selected '+DISTRICTS.find(d=>d.id===id).name+'. Each district is a separate editable reference sketch.');}
  function onSlot(slot){
   if(slot.existing){setSelected(slot.existing.id);setNotice('Selected '+BUILDINGS[slot.existing.template].name+'. Use movement and rotation tools below.');return;}
-  const candidate={id:districtId+'-building-'+(++counter.current),template:tool,col:slot.col,row:slot.row,rotation};
+  let identifier;
+  do{identifier=districtId+'-building-'+(++counter.current);}while(layout.some(p=>p.id===identifier));
+  const candidate={id:identifier,template:tool,col:slot.col,row:slot.row,rotation};
   const test=validatePlacement(layout,candidate);
   if(!test.ok){setNotice('Cannot place here: '+test.reasons.join('; '));return;}
   updateLayout([...layout,candidate],BUILDINGS[tool].name+' placed in row '+(slot.row+1)+', column '+(slot.col+1)+'.');

@@ -1,12 +1,13 @@
 import React,{useMemo,useState} from 'react';
 import {DOMAINS,KINDS,REVIEW_GATES,buildEvidenceLedger,validateEvidenceLedger,evidenceExport} from './evidence.js';
+import {useWorkspace} from './WorkspaceContext.jsx';
 import './evidence.css';
 
 const pretty=v=>typeof v==='number'?v.toLocaleString('en-US',{maximumFractionDigits:2}):String(v);
 const codeUrl=path=>'https://github.com/MichaelWave369/CANOPY/blob/main/'+path;
 
-function saveRegister(records){
- const json=evidenceExport(records);
+function saveRegister(records,revision,snapshot){
+ const json=evidenceExport(records,REVIEW_GATES,{revision,snapshot});
  const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
  const link=document.createElement('a');link.href=url;link.download='CANOPY-evidence-model-traceability-v1.json';
  document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
@@ -14,7 +15,8 @@ function saveRegister(records){
 function Status({value}){return <span className="evidence-source-state">{value}</span>;}
 function Summary({label,value,detail}){return <div className="evidence-count"><span>{label}</span><strong>{value}</strong><small>{detail}</small></div>;}
 export default function EvidenceEngine(){
- const records=useMemo(()=>buildEvidenceLedger(),[]);
+ const {snapshot,revision}=useWorkspace();
+ const records=useMemo(()=>buildEvidenceLedger(snapshot),[snapshot]);
  const audit=useMemo(()=>validateEvidenceLedger(records),[records]);
  const [domain,setDomain]=useState('all');
  const [kind,setKind]=useState('all');
@@ -35,11 +37,11 @@ export default function EvidenceEngine(){
    <div>
     <span className="eyebrow">11 / MISSION SEVEN · EVIDENCE ENGINE</span>
     <h2>Make every claim<br/><em>show its work.</em></h2>
-    <p>The source of truth isn't a gorgeous rendering or an optimistic spreadsheet. It's a versioned chain from assumption, to computation, to external proof. We only have the first two pieces so far.</p>
+    <p>The source of truth isn't a gorgeous rendering or an optimistic spreadsheet. This view follows your shared scenario changes through calculation and provenance, but still requires independent outside evidence.</p>
    </div>
-   <button type="button" onClick={()=>saveRegister(records)} disabled={!audit.ok} className="evidence-export">Download model evidence ledger ↗</button>
+   <button type="button" onClick={()=>saveRegister(records,revision.revision,snapshot)} disabled={!audit.ok} className="evidence-export">Download model evidence ledger ↗</button>
   </div>
-  <div className="evidence-disclaimer"><strong>TRACEABLE ≠ VERIFIED</strong><span>This registry links CANOPY's default reference values to repository code. It contains no site measurements, independent studies or approved professional decisions. All construction gates are blocked.</span></div>
+  <div className="evidence-disclaimer"><strong>TRACEABLE ≠ VERIFIED</strong><span>This registry reflects shared workspace revision {revision.revision}, including energy, water and the selected district's example or edited buildings. It contains no site measurements, independent studies or approved decisions. All construction gates remain blocked.</span></div>
   <div className="evidence-counter-grid">
    <Summary label="Traceable model records" value={records.length} detail="Internal code + formula lineage"/>
    <Summary label="Outside evidence reviewed" value="0" detail="No independent site records supplied"/>
@@ -107,7 +109,7 @@ export default function EvidenceEngine(){
   </div>
   <div className="evidence-scope">
    <div><span className="evidence-field-label">VERSIONED, READ-ONLY BASELINE</span><h3>Traceability first. External evidence next.</h3></div>
-   <p>The register is assembled from **default/reference** inputs in each CANOPY model. Changing sliders in another panel does not yet alter this baseline. A future shared-scenario store can provide versioned live lineage; outside evidence will need authenticated sources, consent and independent verification before any readiness status can change.</p>
+   <p>The register follows **shared energy, water, selected district, services and infrastructure** inputs. The separate Blueprint Studio, Living Atlas and independent community/utility sliders still use their own local settings; those specific records remain canonical examples. Outside evidence needs authenticated sources, consent and independent verification before any readiness status can change.</p>
    <a href="https://github.com/MichaelWave369/CANOPY/blob/main/docs/EVIDENCE-ENGINE.md" target="_blank" rel="noreferrer">Read the evidence contract ↗</a>
   </div>
  </div>;

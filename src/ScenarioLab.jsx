@@ -1,5 +1,6 @@
 import React,{useMemo,useState} from 'react';
 import {ENERGY_DEFAULTS,WATER_DEFAULTS,ENERGY_PRESETS,WATER_PRESETS,simulateEnergy,simulateWater,scenarioExport} from './scenario.js';
+import {useWorkspace} from './WorkspaceContext.jsx';
 import './scenario.css';
 
 function Slider({label,value,min,max,step=1,unit='',description,onChange}){
@@ -59,8 +60,9 @@ function MonthlyChart({months}){
 }
 export default function ScenarioLab(){
   const [mode,setMode]=useState('energy');
-  const [energyInput,setEnergyInput]=useState({...ENERGY_DEFAULTS});
-  const [waterInput,setWaterInput]=useState({...WATER_DEFAULTS});
+  const {snapshot,setEnergy:setEnergyInput,setWater:setWaterInput,revision}=useWorkspace();
+  const energyInput=snapshot.energy;
+  const waterInput=snapshot.water;
   const [energyPreset,setEnergyPreset]=useState('baseline');
   const [waterPreset,setWaterPreset]=useState('baseline');
   const energy=useMemo(()=>simulateEnergy(energyInput),[energyInput]);
@@ -78,6 +80,7 @@ export default function ScenarioLab(){
       <div><span className="eyebrow">05 / THE LIVING SYSTEMS LAB</span><h2>Change the inputs.<br/><em>See the trade-offs.</em></h2><p>A reproducible planning experiment with electricity and water separated, explicit imports, and assumptions you can challenge.</p></div>
       <button className="scenario-export" type="button" onClick={exportScenario}>Export synthetic JSON ↗</button>
     </div>
+    <p className="scenario-footnote">Shared workspace revision {revision.revision}. Editing energy or water creates a local scenario revision and updates the Evidence Engine. No real site data is implied.</p>
     <div className="scenario-tabs" role="tablist" aria-label="Select planning model">
       <button type="button" role="tab" aria-selected={mode==='energy'} onClick={()=>setMode('energy')}>01 · Energy + storage</button>
       <button type="button" role="tab" aria-selected={mode==='water'} onClick={()=>setMode('water')}>02 · Water + reuse</button>
@@ -86,8 +89,8 @@ export default function ScenarioLab(){
       <div className="scenario-inputs">
         <div className="scenario-panel-label">ADJUST ASSUMPTIONS</div>
         {mode==='energy'
-          ?<EnergyControls input={energyInput} change={changeEnergy} preset={energyPreset} select={k=>{setEnergyPreset(k);setEnergyInput({...ENERGY_PRESETS[k]});}}/>
-          :<WaterControls input={waterInput} change={changeWater} preset={waterPreset} select={k=>{setWaterPreset(k);setWaterInput({...WATER_PRESETS[k]});}}/>}
+          ?<EnergyControls input={energyInput} change={changeEnergy} preset={energyPreset} select={k=>{setEnergyPreset(k);setEnergyInput(Object.fromEntries(Object.entries(ENERGY_PRESETS[k]).filter(([key])=>key!=='label')));}}/>
+          :<WaterControls input={waterInput} change={changeWater} preset={waterPreset} select={k=>{setWaterPreset(k);setWaterInput(Object.fromEntries(Object.entries(WATER_PRESETS[k]).filter(([key])=>key!=='label')));}}/>}
       </div>
       <div className="scenario-results" aria-live="polite">
         <div className="scenario-panel-label">SYNTHETIC OUTPUT · NOT OBSERVED</div>

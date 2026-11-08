@@ -76,6 +76,14 @@ Open **Evidence engine** in the CANOPY explorer to inspect the repository's **de
 
 The **eight construction evidence gates remain NOT VERIFIED**. The registry validates its own structure and exports a reproducible **canopy.evidence.v1** JSON model ledger, but it does **not** accept independent field evidence or grant permits. Values currently refer to canonical default scenarios, not unsaved edits in other panels. See the [Evidence Engine contract and future verified-data workflow](docs/EVIDENCE-ENGINE.md).
 
+## Mission Eight: Shared Scenario Core
+
+The **Workspace** panel connects the Living Systems Lab's energy and water inputs, the District Composer's six neighborhood layouts and selected district, their downstream Living Neighborhood and Infrastructure models, and the relevant records in the Evidence Engine. Changes propagate through the same React scenario context, rather than being copied between separate panels.
+
+The workspace has deterministic **canopy.workspace.v1** snapshots, revision history, undo/redo, restoration by selecting a revision, a canonical-baseline comparison, local browser persistence, and versioned JSON import/export with validation. Imports never import approvals: every result remains **SYNTHETIC / UNVERIFIED / NOT FOR CONSTRUCTION**.
+
+**Scope:** the independent Blueprint Studio prototype controls, Atlas setback slider, and community/utility-specific capacity sliders are not yet shared. The Evidence Engine draws dynamic values from the shared energy/water/district state while continuing to display static examples for modules not yet connected. Browser local storage is neither collaborative cloud storage nor a tamper-proof audit log. See the [shared scenario contract](docs/SHARED-SCENARIOS.md).
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
@@ -89,6 +97,7 @@ The **eight construction evidence gates remain NOT VERIFIED**. The registry vali
 - [Living Neighborhood](docs/LIVING-NEIGHBORHOOD.md): synthetic routed walks, service demand/capacity, emergency access proxies and capital sensitivity
 - [Infrastructure Nervous System](docs/INFRASTRUCTURE.md): topology, hypothetical plant capacities, supply and drainage balances, failures and limits
 - [Evidence Engine](docs/EVIDENCE-ENGINE.md): source-linked model claims, status safeguards, real-world evidence gates and reproducible baseline export
+- [Shared Scenario Core](docs/SHARED-SCENARIOS.md): versioned reference inputs, scenario history, local persistence and cross-model lineage
 
 ## Principles
 

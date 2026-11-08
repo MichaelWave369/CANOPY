@@ -50,12 +50,14 @@ const rec=(id,domain,title,value,unit,kind,reference,formula,verify,gate,context
  * All records use default/reference inputs. Editing other page panels does not
  * alter this snapshot because they currently keep separate local React state.
  */
-export function buildEvidenceLedger(){
- const energy=simulateEnergy(ENERGY_DEFAULTS);
- const water=simulateWater(WATER_DEFAULTS);
+export function buildEvidenceLedger(workspaceSnapshot=null){
+ const energyInput=workspaceSnapshot?workspaceSnapshot.energy:ENERGY_DEFAULTS;
+ const waterInput=workspaceSnapshot?workspaceSnapshot.water:WATER_DEFAULTS;
+ const energy=simulateEnergy(energyInput);
+ const water=simulateWater(waterInput);
  const atlas=estimateAtlas(SETBACKS.reference);
  const building=calculateBuilding(BUILDINGS.courtyard);
- const layout=seedLayout('garden');
+ const layout=workspaceSnapshot?workspaceSnapshot.layouts[workspaceSnapshot.districtId]:seedLayout('garden');
  const district=composeMetrics(layout);
  const community=evaluateNeighborhood(layout,DEFAULT_CAPACITY);
  const infrastructure=runInfrastructure(layout,DEFAULT_INFRA);
@@ -74,9 +76,9 @@ export function buildEvidenceLedger(){
  add('CITY-006','city','Model land budget sum',landUseTotal(),'%','derived',['src/model.js','landUseTotal'],
   'Sum of reference categories, not independent verification','Compare actual site areas and mutually exclusive land classes','land');
 
- add('EN-001','energy','Reference solar nameplate',ENERGY_DEFAULTS.solarMW,'MWp','assumption',['src/scenario.js','ENERGY_DEFAULTS.solarMW'],
+ add('EN-001','energy','Reference solar nameplate',energyInput.solarMW,'MWp','assumption',['src/scenario.js','ENERGY_DEFAULTS.solarMW'],
   'No roof-area audit, irradiance, land exclusion or equipment selection','Real solar resource, available area, interconnection and environmental study','energy');
- add('EN-002','energy','Reference wind nameplate',ENERGY_DEFAULTS.windMW,'MW','assumption',['src/scenario.js','ENERGY_DEFAULTS.windMW'],
+ add('EN-002','energy','Reference wind nameplate',energyInput.windMW,'MW','assumption',['src/scenario.js','ENERGY_DEFAULTS.windMW'],
   'No verified wind feasibility, fauna protection or siting rights','Wind data, wildlife assessment, permits and economic feasibility','energy');
  add('EN-003','energy','Annual electricity demand',energy.annualDemandGWh,'GWh/year','derived',['src/scenario.js','simulateEnergy'],
   'Synthetic 8,760-hour demand curve normalized to 240 GWh/year','Measured hourly demand and thermal/electric service separation','energy');
@@ -86,7 +88,7 @@ export function buildEvidenceLedger(){
   'Demand shortfall after simulated battery dispatch; annual generation parity does not eliminate imports','Actual demand timing, export/import limits and utility tariff profile','energy');
  add('EN-006','energy','Local hourly electricity share',energy.localSharePct,'%','derived',['src/scenario.js','simulateEnergy'],
   'Synthetic fraction of hourly load covered locally; not islanding or net-zero evidence','Calibrated dispatch and multi-day extreme condition verification','energy');
- add('EN-007','energy','Reference battery storage',ENERGY_DEFAULTS.batteryMWh,'MWh','assumption',['src/scenario.js','ENERGY_DEFAULTS.batteryMWh'],
+ add('EN-007','energy','Reference battery storage',energyInput.batteryMWh,'MWh','assumption',['src/scenario.js','ENERGY_DEFAULTS.batteryMWh'],
   'Four-hour illustrative dispatch with 86% assumed round-trip efficiency','Battery power/energy sizing, fire protection, useful lifetime and degradation','energy');
 
  add('WA-001','water','Citywide gross daily water reference',ASSUMPTIONS.dailyWaterML,'ML/day','assumption',['src/model.js','ASSUMPTIONS.dailyWaterML'],
@@ -136,7 +138,15 @@ export function buildEvidenceLedger(){
   'Rainfall depth × 36 ha × assumed runoff coefficient; no hydrologic hydrograph','Observed rainfall, soils, pollutant control, safe outfall, flood analysis','ecology');
  add('UT-005','utilities','Stormwater capacity shortfall',infrastructure.systems.drainage.shortfall,'m³/event','derived',['src/infrastructure.js','runInfrastructure'],
   'Simplified network max-flow vs detention/release budget, not a safe flood design','Qualified civil engineering and downstream hazard evaluation','hazards');
- return r;
+ if(!workspaceSnapshot)return r;
+ const dynamicAssumptions={'EN-001':'solarMW','EN-002':'windMW','EN-007':'batteryMWh'};
+ return r.map(row=>({
+  ...row,
+  context:'Shared editable scenario for '+workspaceSnapshot.districtId+'; synthetic and unverified',
+  source:Object.hasOwn(dynamicAssumptions,row.id)?
+   source('src/workspace.js','snapshot.energy.'+dynamicAssumptions[row.id]):row.source,
+  formula:row.id==='DI-002'?'Selected workspace district layout, not the original seed: '+row.formula:row.formula
+ }));
 }
 export function validateEvidenceLedger(records=buildEvidenceLedger(),gates=REVIEW_GATES){
  const errors=[],ids=new Set(),validDomain=new Set(DOMAINS.map(d=>d.id)),
@@ -160,20 +170,21 @@ export function validateEvidenceLedger(records=buildEvidenceLedger(),gates=REVIE
   constructionClearance:false,
   status:'HOLD: site-specific independent evidence and authorized review not implemented'};
 }
-export function evidenceExport(records=buildEvidenceLedger(),gates=REVIEW_GATES){
+export function evidenceExport(records=buildEvidenceLedger(),gates=REVIEW_GATES,workspaceMeta=null){
  const audit=validateEvidenceLedger(records,gates);
  if(!audit.ok)throw new Error('Cannot export malformed evidence register: '+audit.errors.join('; '));
  return JSON.stringify({
   schema:EVIDENCE_SCHEMA,
   status:'MODEL TRACEABILITY ONLY / NO FIELD VERIFICATION / NOT FOR CONSTRUCTION',
-  scope:'CANOPY canonical default scenarios, not custom sliders edited in other React panels',
+  scope:workspaceMeta?'CANOPY shared editable workspace scenario':'CANOPY canonical default scenarios',
+  workspaceRevision:workspaceMeta?.revision??null,
   caveats:[
    'No external site observation, expert signoff, permission, measured utility result or audit evidence is incorporated.',
    'Values come from source code; traceability is not scientific corroboration, construction approval or risk acceptance.',
    'All real-world readiness gates are unverified and cannot be marked approved through this interface.',
    'A new verification system must validate external documents, signatures, permissions, dates, confidence and contradictions before elevating any claim.'
   ],
-  baselineInputs:{energy:ENERGY_DEFAULTS,water:WATER_DEFAULTS,building:'Living Courtyard',district:'seedLayout(garden)',infrastructure:DEFAULT_INFRA},
+  baselineInputs:workspaceMeta?{energy:workspaceMeta.snapshot.energy,water:workspaceMeta.snapshot.water,building:'Living Courtyard',district:workspaceMeta.snapshot.districtId,layout:workspaceMeta.snapshot.layouts[workspaceMeta.snapshot.districtId],infrastructure:DEFAULT_INFRA}:{energy:ENERGY_DEFAULTS,water:WATER_DEFAULTS,building:'Living Courtyard',district:'seedLayout(garden)',infrastructure:DEFAULT_INFRA},
   gateStatus:gates,
   audit,records
  },null,2);
