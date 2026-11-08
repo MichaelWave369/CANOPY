@@ -21,7 +21,10 @@ The purpose is to build an evidence-backed reference design and interactive rese
 - [x] Add a versioned source-linked registry of canonical synthetic assumptions, model outputs, methodology and verification gates
 - [x] Add structural validation rejecting invented external verification and approval status tampering
 - [ ] Add a securely reviewed evidence-ingestion process for genuine observed data, signatures, field uncertainty and source revisions
-- [ ] Connect a shared scenario state so the provenance ledger can track edited inputs across all CANOPY panels
+- [x] Add shared, versioned energy/water/district state with local persistence, undo/redo and validated JSON transfer
+- [x] Connect source-linked evidence records for live energy/water/selected-district changes
+- [ ] Share Blueprint Studio prototype edits, Atlas setbacks, community capacity and infrastructure-specific controls across the workspace
+- [ ] Add a controlled signed external-evidence review system; local revision numbers alone are not authoritative
 - [x] Add editable synthetic water/energy scenarios and normalized hourly demand/generation profiles
 - [ ] Replace synthetic profiles with verifiable, site-specific hourly weather and consumption datasets
 - [x] Add illustrative riparian buffers and exclusion/review summaries with transparent methods

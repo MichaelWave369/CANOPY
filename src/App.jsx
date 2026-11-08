@@ -4,6 +4,7 @@ import LivingAtlas from './LivingAtlas.jsx';
 import BlueprintStudio from './BlueprintStudio.jsx';
 import DistrictComposer from './DistrictComposer.jsx';
 import EvidenceEngine from './EvidenceEngine.jsx';
+import WorkspacePanel from './WorkspacePanel.jsx';
 import { ACRONYM, ASSUMPTIONS, DISTRICTS, LAND_USE, SYSTEMS, PHASES, energyBalanceGWh } from './model.js';
 
 const repoUrl = 'https://github.com/MichaelWave369/CANOPY';
@@ -178,7 +179,7 @@ function App() {
         <a className="brand" href="#home" aria-label="CANOPY home"><BrandMark/><span>CANOPY<span className="brand-period">.</span></span></a>
         <nav aria-label="Primary navigation">
           <a href="#place">The place</a>
-          <a href="#systems">The systems</a><a href="#atlas">Living atlas</a><a href="#lab">Living lab</a><a href="#studio">Blueprints</a><a href="#district">Districts</a><a href="#infrastructure">Utilities</a><a href="#ledger">Evidence engine</a>
+          <a href="#systems">The systems</a><a href="#atlas">Living atlas</a><a href="#workspace">Workspace</a><a href="#lab">Living lab</a><a href="#studio">Blueprints</a><a href="#district">Districts</a><a href="#infrastructure">Utilities</a><a href="#ledger">Evidence engine</a>
           <a href="#evidence">Reality ledger</a>
           <a className="nav-github" href={repoUrl} target="_blank" rel="noreferrer">GitHub ↗</a>
         </nav>
@@ -245,6 +246,8 @@ function App() {
           </div>
           <div className="truth-banner"><span className="truth-chip">{ASSUMPTIONS.status}</span><p>There is no selected site, completed environmental assessment, planning approval or constructed CANOPY city. These materials are an open reference for scrutiny and iteration.</p></div>
         </section>
+
+        <section id="workspace" className="section-workspace"><WorkspacePanel /></section>
 
         <section id="lab" className="section-lab"><ScenarioLab /></section>
 
