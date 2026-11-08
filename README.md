@@ -62,6 +62,14 @@ The **Living Neighborhood** panel inside **Districts** uses the *same edited nei
 
 A phased low/high construction cost sensitivity model uses openly documented **invented USD unit rates**, not actual quotations or a project budget. Change school, clinic, civic-room capacity and the cost multiplier. Export a complete **`canopy.neighborhood.v1` fictional scenario** as local JSON. See [methods, limitations and evidence gates](docs/LIVING-NEIGHBORHOOD.md).
 
+## Mission Six: Infrastructure Nervous System
+
+The **Infrastructure Nervous System** panel inside the District Composer uses the **same current block inventory** to calculate illustrative water, wastewater, district thermal and stormwater loads across an explicit five-node/eight-link utility graph. Each network has separate capacity limits, demand/shortfall reports and a selectable disabled corridor.
+
+Adjust hypothetical water supply/reuse, sewage treatment, heating/cooling peak intensity, design rainfall, detention and release allowances. Study water shortage, heat stress, downpour and link outage scenarios. Export a versioned **canopy.infrastructure.v1** JSON model that includes the assumptions.
+
+**No utility is built or approved.** These are invented network capacities, schematic straight connections and simplified maximum-flow quantities, not hydraulic/heat/flood simulations, operational safety assessments, legally permitted water rights or actual underground easements. See [methods and evidence requirements](docs/INFRASTRUCTURE.md).
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
@@ -73,6 +81,7 @@ A phased low/high construction cost sensitivity model uses openly documented **i
 - [Architectural Blueprint Studio](docs/BLUEPRINT-STUDIO.md): typologies, conceptual geometry, roof assumptions and evidence gates
 - [District Composer](docs/DISTRICT-COMPOSER.md): multi-building neighborhood composition, constraints, infrastructure assumptions and provenance
 - [Living Neighborhood](docs/LIVING-NEIGHBORHOOD.md): synthetic routed walks, service demand/capacity, emergency access proxies and capital sensitivity
+- [Infrastructure Nervous System](docs/INFRASTRUCTURE.md): topology, hypothetical plant capacities, supply and drainage balances, failures and limits
 
 ## Principles
 

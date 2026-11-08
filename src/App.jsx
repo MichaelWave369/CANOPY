@@ -177,7 +177,7 @@ function App() {
         <a className="brand" href="#home" aria-label="CANOPY home"><BrandMark/><span>CANOPY<span className="brand-period">.</span></span></a>
         <nav aria-label="Primary navigation">
           <a href="#place">The place</a>
-          <a href="#systems">The systems</a><a href="#atlas">Living atlas</a><a href="#lab">Living lab</a><a href="#studio">Blueprints</a><a href="#district">Districts</a>
+          <a href="#systems">The systems</a><a href="#atlas">Living atlas</a><a href="#lab">Living lab</a><a href="#studio">Blueprints</a><a href="#district">Districts</a><a href="#infrastructure">Utilities</a>
           <a href="#evidence">Reality ledger</a>
           <a className="nav-github" href={repoUrl} target="_blank" rel="noreferrer">GitHub ↗</a>
         </nav>

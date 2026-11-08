@@ -1,6 +1,7 @@
 import React,{useMemo,useRef,useState} from 'react';
 import {DISTRICTS} from './model.js';
 import NeighborhoodLab from './NeighborhoodLab.jsx';
+import InfrastructureLab from './InfrastructureLab.jsx';
 import {BUILDINGS} from './blueprint.js';
 import {CANVAS,SLOTS,RESERVED,TRANSIT_STOPS,footprint,validatePlacement,composeMetrics,seedLayout,districtExport} from './district.js';
 import './district.css';
@@ -203,6 +204,7 @@ export default function DistrictComposer(){
   </div>
   <div className="district-metric-grid">{measures.map(m=><Metric key={m.label} {...m}/>)}</div>
   <NeighborhoodLab layout={layout} districtId={districtId} selected={selected}/>
+  <InfrastructureLab layout={layout} districtId={districtId} selected={selected}/>
   <div className="district-interpretation">
    <div><span className="district-overline">COMMUNITY EQUIPMENT / STUDY ONLY</span>
     <h3>One district, more than housing.</h3>
