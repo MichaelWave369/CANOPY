@@ -23,7 +23,10 @@ The purpose is to build an evidence-backed reference design and interactive rese
 - [ ] Add a securely reviewed evidence-ingestion process for genuine observed data, signatures, field uncertainty and source revisions
 - [x] Add shared, versioned energy/water/district state with local persistence, undo/redo and validated JSON transfer
 - [x] Connect source-linked evidence records for live energy/water/selected-district changes
-- [ ] Share Blueprint Studio prototype edits, Atlas setbacks, community capacity and infrastructure-specific controls across the workspace
+- [x] Share Blueprint Studio prototype edits, Atlas setback controls, community capacity and infrastructure-specific inputs across the v2 workspace
+- [x] Propagate revised prototype housing, PV, thermal and utility loads to district models and evidence records
+- [x] Migrate prior v1 local workspace history and JSON exports into v2 with explicit default values
+- [ ] Introduce actual surveyed GIS parcel coordinates and authoritative layer overlays with landowner consent
 - [ ] Add a controlled signed external-evidence review system; local revision numbers alone are not authoritative
 - [x] Add editable synthetic water/energy scenarios and normalized hourly demand/generation profiles
 - [ ] Replace synthetic profiles with verifiable, site-specific hourly weather and consumption datasets

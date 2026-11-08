@@ -2,6 +2,8 @@ import React,{useMemo,useRef,useState} from 'react';
 import {DISTRICTS} from './model.js';
 import {BUILDINGS,MATERIALS,calculateBuilding,blueprintExport} from './blueprint.js';
 import {FloorPlan,SectionDrawing} from './BlueprintDrawings.jsx';
+import {useWorkspace} from './WorkspaceContext.jsx';
+import {validateSnapshot} from './workspace.js';
 import './blueprint.css';
 
 const LEVELS=[['ground','Ground / public'],['typical','Typical / shared'],['roof','Roof / ecology']];
@@ -25,22 +27,35 @@ function Figure({label,value,unit,description}){
   </div>;
 }
 export default function BlueprintStudio(){
+  const {snapshot,setPrototype}=useWorkspace();
   const [template,setTemplate]=useState('courtyard');
-  const [plan,setPlan]=useState({...BUILDINGS.courtyard});
+  const [notice,setNotice]=useState('Prototype changes now revise the shared City Twin scenario.'); 
+  const plan=snapshot.prototypes[template];
   const [level,setLevel]=useState('typical');
   const planRef=useRef(null);
   const stats=useMemo(()=>calculateBuilding(plan),[plan]);
   const material=MATERIALS[plan.material];
   const district=DISTRICTS.find(d=>d.id===plan.districtId)||DISTRICTS[0];
-  const update=(key,value)=>setPlan(current=>{
+  const update=(key,value)=>{
+    const current=plan;
     const next={...current,[key]:value};
     if(key==='widthM')next.courtWidthM=Math.min(next.courtWidthM,value-14);
     if(key==='depthM')next.courtDepthM=Math.min(next.courtDepthM,value-14);
     if(key==='solarRoofShare')next.greenRoofShare=Math.min(next.greenRoofShare,85-value);
     if(key==='greenRoofShare')next.solarRoofShare=Math.min(next.solarRoofShare,85-value);
-    return next;
-  });
-  function choose(key){setTemplate(key);setPlan({...BUILDINGS[key]});setLevel('typical');}
+    try{
+      validateSnapshot({...snapshot,prototypes:{...snapshot.prototypes,[template]:next}});
+      setPrototype(template,next);
+      setNotice('Prototype revised. District and infrastructure estimates will recalculate.');
+    }catch(error){setNotice('Edit blocked by the shared layout or geometry rules: '+error.message);}
+  };
+  function choose(key){setTemplate(key);setLevel('typical');setNotice('Selected '+BUILDINGS[key].name+' from the shared scenario.');}
+  function resetTemplate(){
+    try{
+      validateSnapshot({...snapshot,prototypes:{...snapshot.prototypes,[template]:{...BUILDINGS[template]}}});
+      setPrototype(template,{...BUILDINGS[template]});setNotice('Restored the canonical prototype.');
+    }catch(error){setNotice('Reset blocked: '+error.message);}
+  }
   function getJson(){return blueprintExport(plan,level);}
   function exportJson(){FileDownload({filename:'CANOPY-'+template+'-concept-blueprint.json',data:getJson(),mime:'application/json'});}
   function exportSvg(){
@@ -66,6 +81,7 @@ export default function BlueprintStudio(){
       </button>)}
     </div>
 
+    <p role="status" aria-live="polite" className="studio-notice" style={{margin:'12px 0',fontSize:12,color:'#436e50'}}>{notice}</p>
     <div className="studio-workspace">
       <div className="studio-editor">
         <div className="studio-overline">EDIT THE REFERENCE MODEL</div>
@@ -98,7 +114,7 @@ export default function BlueprintStudio(){
             {DISTRICTS.map(d=><option value={d.id} key={d.id}>{d.name}</option>)}
           </select>
         </div>
-        <button type="button" className="studio-reset" onClick={()=>choose(template)}>Reset this prototype ↶</button>
+        <button type="button" className="studio-reset" onClick={resetTemplate}>Reset this prototype ↶</button>
       </div>
       <div className="studio-preview">
         <div className="studio-plan-controls">

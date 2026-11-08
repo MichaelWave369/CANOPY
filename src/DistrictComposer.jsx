@@ -63,7 +63,7 @@ function ComposerMap({placements,selected,onSlot,tool,rotation,show}){
   if(existing)return {...s,existing,ok:true,reason:''};
   const test=validatePlacement(placements,{id:'candidate',template:tool,col:s.col,row:s.row,rotation});
   return {...s,existing:null,ok:test.ok,reason:test.reasons.join('; ')};
- }),[placements,tool,rotation]);
+ }),[placements,tool,rotation,templates]);
  return <div className="district-map-paper">
   <div className="district-map-head"><strong>NEIGHBORHOOD COMPOSITION CANVAS</strong><span>600 × 600 m · LOCAL CONCEPT COORDINATES</span></div>
   <div ref={mapRef} className="district-map-stage">

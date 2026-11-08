@@ -109,7 +109,7 @@ export default function EvidenceEngine(){
   </div>
   <div className="evidence-scope">
    <div><span className="evidence-field-label">VERSIONED, READ-ONLY BASELINE</span><h3>Traceability first. External evidence next.</h3></div>
-   <p>The register follows **shared energy, water, selected district, services and infrastructure** inputs. The separate Blueprint Studio, Living Atlas and independent community/utility sliders still use their own local settings; those specific records remain canonical examples. Outside evidence needs authenticated sources, consent and independent verification before any readiness status can change.</p>
+   <p>The register follows the shared City Twin inputs for energy, water, building prototypes, river setback, selected district, community-service capacity and utility settings. Source formulas remain synthetic, not real-world observations; land rights and construction review gates stay unverified.</p>
    <a href="https://github.com/MichaelWave369/CANOPY/blob/main/docs/EVIDENCE-ENGINE.md" target="_blank" rel="noreferrer">Read the evidence contract ↗</a>
   </div>
  </div>;

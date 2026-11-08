@@ -40,7 +40,7 @@ export default function WorkspacePanel(){
    <div>
     <span className="eyebrow">12 / MISSION EIGHT · SHARED SCENARIO CORE</span>
     <h2>One scenario.<br/><em>A thousand questions.</em></h2>
-    <p>Energy, water, district composition and the Evidence Engine now share a versioned local planning workspace. Compare assumptions, inspect revisions and restore an earlier model without elevating the results to verified facts.</p>
+    <p>Energy, water, architecture, schematic ecology, district composition, community capacity, infrastructure and the Evidence Engine now share a versioned local planning workspace. Compare assumptions, inspect revisions and restore an earlier model without elevating the results to verified facts.</p>
    </div>
    <div className="workspace-revision-stamp"><span>ACTIVE REVISION</span><strong>{revision.revision}</strong><small>{revision.label}</small></div>
   </div>
@@ -82,6 +82,6 @@ export default function WorkspacePanel(){
     <p className="workspace-comparison-note">Selected district comparisons always use the same named district on each side. A different selected district changes the *comparison context*, not the model's six-district geography. These totals do not certify hourly resilience, potable quality, live public services or real site buildability.</p>
    </div>
   </div>
-  <div className="workspace-footer"><strong>SCOPE OF LIVE CONNECTIONS</strong><span>Shared now: energy and water sliders, six District Composer layouts and selected district, downstream Living Neighborhood/Infrastructure estimates, and their Evidence Engine model records. Still separate: Blueprint Studio prototype edits, Atlas setback controls and facility/utility-specific slider assumptions. Those remain future integration work.</span><a href="https://github.com/MichaelWave369/CANOPY/blob/main/docs/SHARED-SCENARIOS.md" target="_blank" rel="noreferrer">Model contract ↗</a></div>
+  <div className="workspace-footer"><strong>SCOPE OF LIVE CONNECTIONS</strong><span>Shared now: energy and water sliders, four Blueprint Studio prototypes, the schematic Atlas river buffer, all six district layouts, school/clinic/civic capacity, utility assumptions, and Evidence Engine records. Local browser revisions are not approvals; the fictional Atlas and 36-hectare Composer are still separate spatial canvases.</span><a href="https://github.com/MichaelWave369/CANOPY/blob/main/docs/SHARED-SCENARIOS.md" target="_blank" rel="noreferrer">Model contract ↗</a></div>
  </div>;
 }

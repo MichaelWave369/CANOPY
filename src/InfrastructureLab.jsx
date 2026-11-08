@@ -2,6 +2,7 @@ import React,{useMemo,useState} from 'react';
 import {BUILDINGS} from './blueprint.js';
 import {footprint} from './district.js';
 import {DEFAULT_INFRA,INFRA_SCHEMA,NODES,LINKS,UTILITIES,runInfrastructure,infrastructureExport} from './infrastructure.js';
+import {useWorkspace} from './WorkspaceContext.jsx';
 import './infrastructure.css';
 
 const fmt=(n,decimals=1)=>Number(n).toLocaleString('en-US',{maximumFractionDigits:decimals});
@@ -32,7 +33,7 @@ function Controls({config,set,active}){
    </label>)}
  </div>;
 }
-function NetworkMap({layout,active,config,selectedId,result}){
+function NetworkMap({layout,active,config,selectedId,result,templates=BUILDINGS}){
  const color=SYSTEM_COLORS[active];
  return <svg viewBox="0 0 600 600" className="infra-map" xmlns="http://www.w3.org/2000/svg"
   role="img" aria-label={'Schematic '+UTILITIES.find(s=>s.id===active).name+' graph: center hub, four branch nodes, ring links, building connections and one selectable failed link. Not surveyed infrastructure.'}>
@@ -58,7 +59,7 @@ function NetworkMap({layout,active,config,selectedId,result}){
   {layout.map((item,i)=>{
    const building=result.graph.buildingConnections.find(b=>b.id===item.id);
    if(!building)return null;
-   const c=footprint(item),node=NODES.find(n=>n.id===building.hubId),proto=BUILDINGS[item.template];
+   const c=footprint(item,templates),node=NODES.find(n=>n.id===building.hubId),proto=templates[item.template];
    return <g key={item.id}>
     <line x1={c.cx} y1={c.cy} x2={node.x} y2={node.y} stroke={color} strokeWidth="2.3" strokeDasharray="5 5" opacity=".65"/>
     <rect x={c.x} y={c.y} width={c.w} height={c.h} rx="2" fill={item.id===selectedId?'#e3c17e':'#9abda9'} stroke={item.id===selectedId?'#355642':'#719782'} strokeWidth={item.id===selectedId?4:2}/>
@@ -92,11 +93,12 @@ function setPreset(id){
  if(id==='failure')return {...base,failedLink:'hub-east'};
  return base;
 }
-export default function InfrastructureLab({layout,districtId,selected}){
- const [config,setConfig]=useState({...DEFAULT_INFRA});
+export default function InfrastructureLab({layout,districtId,selected,templates=BUILDINGS}){
+ const {snapshot,setInfrastructure:setConfig}=useWorkspace();
+ const config=snapshot.infrastructure;
  const [active,setActive]=useState('potable');
  const [preset,setPresetState]=useState('normal');
- const result=useMemo(()=>runInfrastructure(layout,config),[layout,config]);
+ const result=useMemo(()=>runInfrastructure(layout,config,templates),[layout,config,templates]);
  const utility=result.systems[active];
  const set=(key,value)=>{setConfig(s=>({...s,[key]:value}));setPresetState(null);};
  function usePreset(id){setPresetState(id);setConfig(setPreset(id));}
@@ -105,7 +107,7 @@ export default function InfrastructureLab({layout,districtId,selected}){
    <span className="district-overline">10 / MISSION SIX · THE INFRASTRUCTURE NERVOUS SYSTEM</span>
    <h3>The city beneath<br/><em>the living city.</em></h3>
    <p>Explore four linked but independently modeled utility networks. Change plant throughput, storm design assumptions and a corridor outage, then watch where hypothetical capacity runs out.</p>
-  </div><button type="button" className="infra-download" onClick={()=>saveFile('CANOPY-'+districtId+'-infrastructure-concept.json',infrastructureExport(districtId,layout,config))}>Export utility scenario ↗</button></div>
+  </div><button type="button" className="infra-download" onClick={()=>saveFile('CANOPY-'+districtId+'-infrastructure-concept.json',infrastructureExport(districtId,layout,config,templates))}>Export utility scenario ↗</button></div>
   <div className="infra-warning"><strong>FICTIONAL UTILITY NETWORK</strong><span>All nodes, corridors, pipe capacities, facility assumptions and rainfall are invented. Max-flow is an abstract volume/capacity model, not hydraulics, heat transfer, pressure, gravity sewer, flood simulation or permits.</span></div>
   <div className="infra-preset-row" role="group" aria-label="Infrastructure scenario presets">
    {PRESETS.map(p=><button type="button" key={p.id} aria-pressed={preset===p.id} className={preset===p.id?'active':''} onClick={()=>usePreset(p.id)}>{p.name}</button>)}
@@ -115,7 +117,7 @@ export default function InfrastructureLab({layout,districtId,selected}){
   </div>
   <div className="infra-workspace">
    <div className="infra-map-col">
-    <NetworkMap layout={layout} active={active} config={config} selectedId={selected} result={result}/>
+    <NetworkMap layout={layout} active={active} config={config} selectedId={selected} result={result} templates={templates}/>
     <div className="infra-map-caption"><span>H = shared hub</span><span>Dashed = conceptual building connection</span><span>Red = failed link</span></div>
    </div>
    <div className="infra-panel">

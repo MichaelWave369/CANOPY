@@ -34,7 +34,7 @@ const key=(x,y)=>x+','+y;
 const onGrid=v=>Number.isInteger(v)&&v>=20&&v<=580&&v%GRID_M===0;
 const rectHas=(a,x,y,pad=0)=>x>a.x-pad&&x<a.x+a.w+pad&&y>a.y-pad&&y<a.y+a.h+pad;
 const ellipseHas=(e,x,y,pad=0)=>(Math.pow((x-e.cx)/(e.rx+pad),2)+Math.pow((y-e.cy)/(e.ry+pad),2))<1;
-export function isWalkableNode(x,y,layout=[]){
+export function isWalkableNode(x,y,layout=[],templates=BUILDINGS){
  if(!onGrid(x)||!onGrid(y))return false;
  for(const z of RESERVED){
   if(z.category==='ecology'||z.category==='food'){
@@ -44,21 +44,21 @@ export function isWalkableNode(x,y,layout=[]){
    if(!(y===300 && [100,300,500].includes(x)))return false;
   }
  }
- for(const item of layout)if(rectHas(footprint(item),x,y,2))return false;
+ for(const item of layout)if(rectHas(footprint(item,templates),x,y,2))return false;
  return true;
 }
 function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
-export function nearestWalkNode(point,layout=[]){
+export function nearestWalkNode(point,layout=[],templates=BUILDINGS){
  if(!Number.isFinite(point?.x)||!Number.isFinite(point?.y))throw new RangeError('Finite local target coordinates required');
  let best=null;
  for(let y=20;y<=580;y+=GRID_M)for(let x=20;x<=580;x+=GRID_M){
-  if(!isWalkableNode(x,y,layout))continue;
+  if(!isWalkableNode(x,y,layout,templates))continue;
   const d=Math.hypot(point.x-x,point.y-y);
   if(!best||d<best.distanceM-1e-9)best={x,y,distanceM:d};
  }
  return best;
 }
-function routeOnNodes(start,finish,layout){
+function routeOnNodes(start,finish,layout,templates){
  const source=key(start.x,start.y),end=key(finish.x,finish.y);
  const queue=[{x:start.x,y:start.y}],prev=new Map([[source,null]]);
  let head=0;
@@ -67,7 +67,7 @@ function routeOnNodes(start,finish,layout){
   if(k===end)break;
   for(const [dx,dy] of [[20,0],[0,20],[-20,0],[0,-20]]){
    const x=cur.x+dx,y=cur.y+dy,next=key(x,y);
-   if(prev.has(next)||!isWalkableNode(x,y,layout))continue;
+   if(prev.has(next)||!isWalkableNode(x,y,layout,templates))continue;
    prev.set(next,k);queue.push({x,y});
   }
  }
@@ -76,24 +76,24 @@ function routeOnNodes(start,finish,layout){
  while(cursor!==null){const [x,y]=cursor.split(',').map(Number);nodes.push({x,y});cursor=prev.get(cursor);}
  nodes.reverse();return nodes;
 }
-export function routeBetween(from,to,layout=[]){
- if(!validateLayout(layout).ok)throw new RangeError('Layout invalid');
- const start=nearestWalkNode(from,layout),finish=nearestWalkNode(to,layout);
+export function routeBetween(from,to,layout=[],templates=BUILDINGS){
+ if(!validateLayout(layout,templates).ok)throw new RangeError('Layout invalid');
+ const start=nearestWalkNode(from,layout,templates),finish=nearestWalkNode(to,layout,templates);
  if(!start||!finish)return{reachable:false,reason:'No public walking nodes found',path:[]};
  // The short connections to the routed grid are unverified schematic access legs.
  if(start.distanceM>90||finish.distanceM>90)return{
   reachable:false,reason:'Endpoint farther than 90 m from illustrative walk network',path:[]
  };
- const nodes=routeOnNodes(start,finish,layout);
+ const nodes=routeOnNodes(start,finish,layout,templates);
  if(!nodes)return{reachable:false,reason:'No connected pedestrian grid path',path:[]};
  const length=(nodes.length-1)*GRID_M+start.distanceM+finish.distanceM;
  return{reachable:true,routeM:round(length),gridM:(nodes.length-1)*GRID_M,
   connectionM:round(start.distanceM+finish.distanceM),path:[{x:from.x,y:from.y},...nodes,{x:to.x,y:to.y}],
   disclaimer:'Grid-based schematic route plus straight access connections; not a constructed, accessible, gradient-checked or curb-safe walking path'};
 }
-export function routesForBuilding(building,layout){
- const box=footprint(building),source={x:box.cx,y:box.cy};
- const results=TARGETS.map(target=>({id:target.id,label:target.label,kind:target.kind,...routeBetween(source,target,layout)}));
+export function routesForBuilding(building,layout,templates=BUILDINGS){
+ const box=footprint(building,templates),source={x:box.cx,y:box.cy};
+ const results=TARGETS.map(target=>({id:target.id,label:target.label,kind:target.kind,...routeBetween(source,target,layout,templates)}));
  const transit=results.filter(r=>r.kind==='transit'&&r.reachable).sort((a,b)=>a.routeM-b.routeM)[0];
  return {buildingId:building.id,closestStop:transit||null,
   services:results.filter(r=>r.kind!=='transit'),
@@ -120,8 +120,8 @@ export function evaluateServices(estimatedResidents,settings=DEFAULT_CAPACITY){
   status:'Illustrative demand and user-entered capacity, NOT assessed schools, medical provision or permits'
  };
 }
-export function evaluateCosts(layout,options=DEFAULT_CAPACITY){
- const metrics=composeMetrics(layout),mult=nonnegative('Cost factor',options.constructionMultiplier,.5,2);
+export function evaluateCosts(layout,options=DEFAULT_CAPACITY,templates=BUILDINGS){
+ const metrics=composeMetrics(layout,templates),mult=nonnegative('Cost factor',options.constructionMultiplier,.5,2);
  const {buildingLowUsdM2,buildingHighUsdM2,linearInfrastructureLowUsdM,linearInfrastructureHighUsdM,
  restoredPublicRealmM2,publicRealmLowUsdM2,publicRealmHighUsdM2,serviceLowUsdResident,serviceHighUsdResident,
  lowContingency,highContingency,networkLinearMeters}=UNIT_RANGES;
@@ -134,7 +134,7 @@ export function evaluateCosts(layout,options=DEFAULT_CAPACITY){
  const groups=[layout.filter((_,i)=>i%3===0),layout.filter((_,i)=>i%3===1),layout.filter((_,i)=>i%3===2)];
  const weights=[.5,.3,.2];
  const phases=groups.map((group,i)=>{
-  const data=composeMetrics(group),share=data.grossFloorAreaM2/Math.max(1,metrics.grossFloorAreaM2);
+  const data=composeMetrics(group,templates),share=data.grossFloorAreaM2/Math.max(1,metrics.grossFloorAreaM2);
   const costLow=(data.grossFloorAreaM2*buildingLowUsdM2*mult+
    lowNet*weights[i]+data.estimatedResidents*serviceLowUsdResident*mult)*(1+lowContingency);
   const costHigh=(data.grossFloorAreaM2*buildingHighUsdM2*mult+
@@ -147,9 +147,9 @@ export function evaluateCosts(layout,options=DEFAULT_CAPACITY){
   inputs:{constructionMultiplier:mult,...UNIT_RANGES},
   limitations:'Hypothetical 2026-USD unit rates with NO quotes, region, land, financing, operating costs, taxes, local permitting, inflation or site engineering. Contingencies are illustrative. Not a bid or estimate.'};
 }
-export function evaluateNeighborhood(layout,settings=DEFAULT_CAPACITY){
- const metrics=composeMetrics(layout);
- const routing=layout.map(b=>routesForBuilding(b,layout));
+export function evaluateNeighborhood(layout,settings=DEFAULT_CAPACITY,templates=BUILDINGS){
+ const metrics=composeMetrics(layout,templates);
+ const routing=layout.map(b=>routesForBuilding(b,layout,templates));
  const accessible=routing.filter(r=>r.closestStop);
  const threshold=400;
  return{
@@ -162,16 +162,16 @@ export function evaluateNeighborhood(layout,settings=DEFAULT_CAPACITY){
    distanceLimitM:threshold,
    note:'Routed 20 m grid with unverified access legs. No slopes, curb cuts, signals, crossings safety or legal ADA compliance.'},
   emergency:{axisDistanceMaxM:layout.length?round(Math.max(...layout.map(b=>{
-   const r=footprint(b);
+   const r=footprint(b,templates);
    return Math.max(0,Math.min(Math.abs(r.cy-300)-r.h/2,Math.abs(r.cx-300)-r.w/2));
   }))):0,
    thresholdM:120,status:'PROXY ONLY: geometric distance from a footprint to one of two reserve centerlines; not a drivable fire route'},
   services:evaluateServices(metrics.estimatedResidents,settings),
-  costs:evaluateCosts(layout,settings)
+  costs:evaluateCosts(layout,settings,templates)
  };
 }
-export function neighborhoodExport(districtId,layout,settings=DEFAULT_CAPACITY){
- const result=evaluateNeighborhood(layout,settings);
+export function neighborhoodExport(districtId,layout,settings=DEFAULT_CAPACITY,templates=BUILDINGS){
+ const result=evaluateNeighborhood(layout,settings,templates);
  return JSON.stringify({
   schema:NEIGHBORHOOD_SCHEMA,
   status:'FICTIONAL CONCEPT / NOT GIS / NOT FOR CONSTRUCTION',
@@ -181,6 +181,6 @@ export function neighborhoodExport(districtId,layout,settings=DEFAULT_CAPACITY){
     walking:'20m 4-direction routes avoid illustrative habitat, food zones and building envelopes; tram crossings allowed at three hypothetical stations',
     emergency:'Centerline distance proxy ONLY; no drivable fire lane or code clearance',
     costs:'Synthetic cost sensitivity only; full unit-rate assumptions in results'},
-  result
+  prototypes:templates,result
  },null,2);
 }

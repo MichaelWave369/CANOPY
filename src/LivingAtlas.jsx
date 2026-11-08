@@ -1,6 +1,7 @@
 import React,{useMemo,useState} from 'react';
 import {DISTRICTS,LAND_USE} from './model.js';
 import {SITE,SETBACKS,HABITAT,WETLANDS,FARMS,TRANSIT,RIVER_HALF_WIDTH_PCT,estimateAtlas,riparianHalfWidthPct,riverPath,atlasExport} from './atlas.js';
+import {useWorkspace} from './WorkspaceContext.jsx';
 import './atlas.css';
 
 const LAYERS=[
@@ -96,7 +97,8 @@ function Readiness(){
 }
 export default function LivingAtlas(){
  const [selected,setSelected]=useState('garden');
- const [setback,setSetback]=useState(SETBACKS.reference);
+ const {snapshot,setAtlasSetback:setSetback}=useWorkspace();
+ const setback=snapshot.atlasSetbackM;
  const [layers,setLayers]=useState(DEFAULT_LAYERS);
  const report=useMemo(()=>estimateAtlas(setback),[setback]);
  const district=DISTRICTS.find(d=>d.id===selected);

@@ -55,12 +55,12 @@ export function buildEvidenceLedger(workspaceSnapshot=null){
  const waterInput=workspaceSnapshot?workspaceSnapshot.water:WATER_DEFAULTS;
  const energy=simulateEnergy(energyInput);
  const water=simulateWater(waterInput);
- const atlas=estimateAtlas(SETBACKS.reference);
- const building=calculateBuilding(BUILDINGS.courtyard);
+ const atlas=estimateAtlas(workspaceSnapshot?.atlasSetbackM??SETBACKS.reference);
+ const building=calculateBuilding(workspaceSnapshot?.prototypes?.courtyard??BUILDINGS.courtyard);
  const layout=workspaceSnapshot?workspaceSnapshot.layouts[workspaceSnapshot.districtId]:seedLayout('garden');
- const district=composeMetrics(layout);
- const community=evaluateNeighborhood(layout,DEFAULT_CAPACITY);
- const infrastructure=runInfrastructure(layout,DEFAULT_INFRA);
+ const district=composeMetrics(layout,workspaceSnapshot?.prototypes??BUILDINGS);
+ const community=evaluateNeighborhood(layout,workspaceSnapshot?.community??DEFAULT_CAPACITY,workspaceSnapshot?.prototypes??BUILDINGS);
+ const infrastructure=runInfrastructure(layout,workspaceSnapshot?.infrastructure??DEFAULT_INFRA,workspaceSnapshot?.prototypes??BUILDINGS);
  const r=[];
  const add=(...args)=>r.push(rec(...args));
  add('CITY-001','city','Reference city footprint',ASSUMPTIONS.studyAreaKm2,'km²','assumption',['src/model.js','ASSUMPTIONS.studyAreaKm2'],
@@ -100,7 +100,7 @@ export function buildEvidenceLedger(workspaceSnapshot=null){
  add('WA-004','water','Freshwater need after reuse',water.freshwaterRequiredML,'ML/day','derived',['src/scenario.js','simulateWater'],
   'Remaining daily gross demand in a simple steady-state balance','Surface/groundwater rights, drought reliability and downstream habitat flow','water');
 
- add('EC-001','ecology','River setback example',SETBACKS.reference,'m','assumption',['src/atlas.js','SETBACKS.reference'],
+ add('EC-001','ecology','River setback example',workspaceSnapshot?.atlasSetbackM??SETBACKS.reference,'m','assumption',['src/atlas.js','SETBACKS.reference'],
   'Fictional horizontal buffer; NOT a geodesic/legal riparian setback','Surveyed channel and actual applicable riparian/flood/habitat requirements','ecology');
  add('EC-002','ecology','Schematic exclusions in Atlas',atlas.excludedPct,'%','derived',['src/atlas.js','estimateAtlas'],
   '100 × 100 cell sampling of invented ellipse/channel geometry','Official mapped sensitive areas, surveys and certified geospatial analysis','ecology');
@@ -184,7 +184,7 @@ export function evidenceExport(records=buildEvidenceLedger(),gates=REVIEW_GATES,
    'All real-world readiness gates are unverified and cannot be marked approved through this interface.',
    'A new verification system must validate external documents, signatures, permissions, dates, confidence and contradictions before elevating any claim.'
   ],
-  baselineInputs:workspaceMeta?{energy:workspaceMeta.snapshot.energy,water:workspaceMeta.snapshot.water,building:'Living Courtyard',district:workspaceMeta.snapshot.districtId,layout:workspaceMeta.snapshot.layouts[workspaceMeta.snapshot.districtId],infrastructure:DEFAULT_INFRA}:{energy:ENERGY_DEFAULTS,water:WATER_DEFAULTS,building:'Living Courtyard',district:'seedLayout(garden)',infrastructure:DEFAULT_INFRA},
+  baselineInputs:workspaceMeta?{energy:workspaceMeta.snapshot.energy,water:workspaceMeta.snapshot.water,building:'Living Courtyard',district:workspaceMeta.snapshot.districtId,layout:workspaceMeta.snapshot.layouts[workspaceMeta.snapshot.districtId],infrastructure:workspaceMeta.snapshot.infrastructure,community:workspaceMeta.snapshot.community,prototypes:workspaceMeta.snapshot.prototypes,atlasSetbackM:workspaceMeta.snapshot.atlasSetbackM}:{energy:ENERGY_DEFAULTS,water:WATER_DEFAULTS,building:'Living Courtyard',district:'seedLayout(garden)',infrastructure:DEFAULT_INFRA},
   gateStatus:gates,
   audit,records
  },null,2);
