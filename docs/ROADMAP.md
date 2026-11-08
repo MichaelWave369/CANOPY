@@ -18,7 +18,10 @@ The purpose is to build an evidence-backed reference design and interactive rese
 - [x] Add schematic, explicitly un-georeferenced ecological overlays and district-review logic
 - [ ] Add independent authoritative geospatial layers for a selected, consented real site
 - [x] Add a versioned export contract for explicitly synthetic scenario results
-- [ ] Add validated and typed open-ledger records for observed resources, provenance and uncertainty
+- [x] Add a versioned source-linked registry of canonical synthetic assumptions, model outputs, methodology and verification gates
+- [x] Add structural validation rejecting invented external verification and approval status tampering
+- [ ] Add a securely reviewed evidence-ingestion process for genuine observed data, signatures, field uncertainty and source revisions
+- [ ] Connect a shared scenario state so the provenance ledger can track edited inputs across all CANOPY panels
 - [x] Add editable synthetic water/energy scenarios and normalized hourly demand/generation profiles
 - [ ] Replace synthetic profiles with verifiable, site-specific hourly weather and consumption datasets
 - [x] Add illustrative riparian buffers and exclusion/review summaries with transparent methods
