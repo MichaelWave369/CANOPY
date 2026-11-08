@@ -32,7 +32,9 @@ The purpose is to build an evidence-backed reference design and interactive rese
 - [x] Add adjustable school/clinic/community service-capacity scenarios with explicit demand assumptions
 - [x] Add three-phase construction-cost sensitivity with fictional low/high unit rates and disclosures
 - [ ] Replace routing proxies with a professionally designed and surveyed accessible street network
-- [ ] Add stormwater and water/waste district utility corridor design and verified capacities
+- [x] Add synthetic multi-utility district topology with separately tracked water, wastewater, thermal and stormwater capacity/shortfalls
+- [x] Add hypothetical corridor-failure scenarios, mass-balance limits and local scenario export
+- [ ] Replace invented links with verified civil utility alignments, pressure/pipe sizing, drainage hydrology and certified capacity modeling
 - [x] Add a toy cost/phasing sensitivity scenario for the neighborhood concept
 - [ ] Ground lifecycle cost/phasing scenarios in site-specific quantities and independently sourced local estimates
 - [ ] Add professional review of floor/corridor/egress logic, GIS placement and 3D BIM/CAD geometry

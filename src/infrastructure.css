@@ -1,0 +1,66 @@
+.infra-shell{margin:28px 0 0;padding:36px;background:#f1f5ec;border:1px solid #bad0c1;color:#214732}
+.infra-intro{display:flex;justify-content:space-between;align-items:end;gap:25px;margin-bottom:25px}
+.infra-intro>div{max-width:770px}
+.infra-intro h3{font:400 clamp(39px,4vw,57px)/1.07 'DM Serif Display',Georgia,serif;letter-spacing:-.025em;margin:13px 0 17px}
+.infra-intro h3 em{color:#6e9a7d}
+.infra-intro p{max-width:700px;font-size:13px;line-height:1.75;color:#587360}
+.infra-download{padding:16px 18px;white-space:nowrap;background:#20513a;color:#f3f8ed;border:0;font-size:12px;font-weight:700;cursor:pointer}
+.infra-download:hover{background:#367551}
+.infra-warning{display:flex;align-items:center;gap:21px;padding:19px 22px;background:#dce6d9;border-left:3px solid #bc9460;margin-bottom:17px}
+.infra-warning strong{font-size:10px;letter-spacing:.07em;color:#806037;white-space:nowrap}
+.infra-warning span{font-size:11px;color:#58715e;line-height:1.65}
+.infra-preset-row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 17px}
+.infra-preset-row button{padding:12px 17px;cursor:pointer;background:#e4ece2;color:#2e6548;border:1px solid #b4cbb6;font-size:11px}
+.infra-preset-row button.active{background:#26553d;color:#f1f4e9}
+.infra-tabs{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #b6c8b7;border-bottom:0}
+.infra-tabs button{min-width:0;display:flex;gap:8px;align-items:center;justify-content:center;padding:17px 8px;border:0;border-right:1px solid #b6c8b7;background:#e3ede2;color:#33654d;font-size:12px;cursor:pointer}
+.infra-tabs button:last-child{border-right:0}
+.infra-tabs button.active{background:#204d38;color:#f3f8ed}
+.infra-color{display:inline-block;flex-shrink:0;width:11px;height:11px;border-radius:3px}
+.infra-workspace{display:grid;grid-template-columns:minmax(0,1.14fr) minmax(300px,.86fr);gap:0;background:#fdfef7;border:1px solid #b6c8b7}
+.infra-map-col{padding:15px;border-right:1px solid #b6c8b7}
+.infra-map{width:100%;height:auto;display:block}
+.infra-map-caption{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px 5px 0;font-size:10px;color:#61816d}
+.infra-panel{padding:28px;background:#1b4030;color:#edf4e9}
+.infra-panel-overline{display:block;margin:0 0 15px;font-size:10px;letter-spacing:.12em;font-weight:700;color:#b5ceb6}
+.infra-panel h4{font:400 32px/1.12 'DM Serif Display',Georgia,serif;margin:0 0 22px}
+.infra-highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.infra-metric{display:flex;flex-direction:column;gap:9px;border-left:3px solid #8ab69c;padding:13px 14px;background:#2a5540;min-height:117px}
+.infra-metric.warning{border-left-color:#ddb47c}
+.infra-metric>span{font-size:10px;color:#b9dbc3}
+.infra-metric strong{font-size:26px;letter-spacing:-.04em;color:#f5f2df}
+.infra-metric small{font-size:10px;color:#bbcfbd}
+.infra-panel-explain{font-size:10px;color:#bfdbc6;line-height:1.65;border-bottom:1px solid #527a62;padding:13px 0 20px;margin:10px 0 24px}
+.infra-sliders{display:grid;gap:10px}
+.infra-range{display:block;border-top:1px solid #42684f;padding-top:13px;cursor:pointer}
+.infra-range>span{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:#d0e3d0}
+.infra-range strong{color:#e1c28a;font-size:12px;white-space:nowrap}
+.infra-range input{width:100%;margin:12px 0 0;accent-color:#c3ad74}
+.infra-failure{display:flex;flex-direction:column;gap:12px;margin-top:25px;padding-top:19px;border-top:1px solid #527a62;font-size:11px;font-weight:700;color:#d0dfcd}
+.infra-failure select{font:inherit;background:#2b5a41;color:#edf6e7;border:1px solid #68927a;padding:11px;cursor:pointer;font-size:12px}
+.infra-systems{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:15px}
+.infra-system-summary{border:1px solid #b5c7b4;padding:19px;background:#e3ede0;text-align:left;color:#28563c;cursor:pointer;display:grid;gap:8px;min-width:0}
+.infra-system-summary.chosen{background:#d1e2d4;border-color:#527f60}
+.infra-system-summary>span:nth-child(2){font-size:11px;font-weight:700}
+.infra-system-summary strong{font-size:30px;line-height:1.2}
+.infra-system-summary small{font-size:10px;line-height:1.5;color:#5e7968}
+.infra-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:16px 0}
+.infra-water-report,.infra-storm-report{padding:27px 28px;background:#fdfef8;border:1px solid #c7d7c6}
+.infra-water-report h4,.infra-storm-report h4{font:400 30px/1.15 'DM Serif Display',Georgia,serif;margin:11px 0}
+.infra-water-report>p,.infra-storm-report>p{font-size:12px;line-height:1.7;color:#647d69}
+.infra-water-report>div,.infra-storm-report>div{display:flex;justify-content:space-between;gap:10px;align-items:baseline;border-top:1px solid #dae6d9;padding:13px 0}
+.infra-water-report>div span,.infra-storm-report>div span{font-size:11px;color:#54725c}
+.infra-water-report>div strong,.infra-storm-report>div strong{font-size:14px;color:#2a603e;white-space:nowrap}
+.infra-water-report .infra-detail-note,.infra-storm-report .infra-detail-note{font-size:10px;color:#708275;border-top:1px solid #dae6d9;padding-top:16px}
+.infra-alerts{background:#e2e9de;padding:22px;border-left:3px solid #ac875c}
+.infra-alerts>.district-overline{color:#647f69}
+.infra-alerts ul{margin:12px 0 0;padding-left:18px;color:#5d6756}
+.infra-alerts li{margin:8px 0;font-size:12px;line-height:1.65}
+.infra-alerts p{font-size:12px;color:#58715c;line-height:1.7}
+.infra-footer{margin-top:15px;background:#d3e2d1;padding:23px;display:grid;grid-template-columns:auto 1fr auto;gap:19px;align-items:center;border-left:3px solid #a38458}
+.infra-footer strong{font-size:10px;letter-spacing:.07em;color:#865f37;white-space:nowrap}
+.infra-footer span{font-size:11px;line-height:1.65;color:#526957}
+.infra-footer a{font-size:11px;color:#315f40;text-decoration:underline;white-space:nowrap}
+@media(max-width:1110px){.infra-workspace{grid-template-columns:1fr}.infra-map-col{border-right:0;border-bottom:1px solid #b6c8b7}.infra-systems{grid-template-columns:repeat(2,1fr)}.infra-intro{align-items:flex-start;flex-direction:column}.infra-footer{grid-template-columns:1fr;gap:9px}}
+@media(max-width:700px){.infra-shell{padding:23px 14px}.infra-intro h3{font-size:42px}.infra-warning{display:block}.infra-warning span{display:block;margin-top:10px}.infra-tabs{grid-template-columns:repeat(2,1fr)}.infra-tabs button{font-size:11px}.infra-panel{padding:21px}.infra-details-grid{grid-template-columns:1fr}.infra-water-report,.infra-storm-report{padding:23px}.infra-systems{gap:8px}.infra-system-summary{padding:13px}.infra-system-summary strong{font-size:25px}}
+@media(min-width:700px) and (max-width:1270px){.site-header nav{gap:15px;flex-wrap:wrap;justify-content:flex-end}}
