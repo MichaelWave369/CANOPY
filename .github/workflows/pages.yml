@@ -20,8 +20,16 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Test reference model
         run: npm test
+      - name: Render complete React tree (startup smoke test)
+        run: npm run smoke:render
       - name: Build explorer
         run: npm run build
+      - name: Verify built Pages assets are present
+        run: |
+          test -s dist/index.html
+          test -d dist/assets
+          test -n "$(find dist/assets -type f -name '*.js' -print -quit)"
+          grep -q '/CANOPY/assets/' dist/index.html
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3

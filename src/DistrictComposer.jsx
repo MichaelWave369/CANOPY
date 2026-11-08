@@ -43,10 +43,10 @@ function DrawReserved({show}){
   </g>
  </g>;
 }
-function PlacementDrawing({placements,selected}){
+function PlacementDrawing({placements,selected,templates=BUILDINGS}){
  return <g>
  {placements.map((p,i)=>{
-  const r=footprint(p),b=BUILDINGS[p.template],cw=p.rotation===90?b.courtDepthM:b.courtWidthM,ch=p.rotation===90?b.courtWidthM:b.courtDepthM;
+  const r=footprint(p,templates),b=templates[p.template],cw=p.rotation===90?b.courtDepthM:b.courtWidthM,ch=p.rotation===90?b.courtWidthM:b.courtDepthM;
   return <g key={p.id}>
    <rect x={r.x} y={r.y} width={r.w} height={r.h} fill={TYPES[p.template].color} stroke={selected===p.id?'#133b2b':'#446b58'} strokeWidth={selected===p.id?4:2} rx="2"/>
    <rect x={r.cx-cw/2} y={r.cy-ch/2} width={cw} height={ch} fill="#dceada" stroke="#79aa82" strokeWidth="1.5"/>
@@ -56,12 +56,12 @@ function PlacementDrawing({placements,selected}){
  })}
  </g>;
 }
-function ComposerMap({placements,selected,onSlot,tool,rotation,show}){
+function ComposerMap({placements,selected,onSlot,tool,rotation,show,templates=BUILDINGS}){
  const mapRef=useRef(null);
  const slots=useMemo(()=>SLOTS.map(s=>{
   const existing=placements.find(p=>p.col===s.col&&p.row===s.row);
   if(existing)return {...s,existing,ok:true,reason:''};
-  const test=validatePlacement(placements,{id:'candidate',template:tool,col:s.col,row:s.row,rotation});
+  const test=validatePlacement(placements,{id:'candidate',template:tool,col:s.col,row:s.row,rotation},templates);
   return {...s,existing:null,ok:test.ok,reason:test.reasons.join('; ')};
  }),[placements,tool,rotation,templates]);
  return <div className="district-map-paper">
@@ -73,7 +73,7 @@ function ComposerMap({placements,selected,onSlot,tool,rotation,show}){
     <rect width="600" height="600" fill="url(#composer-grid)"/>
     <rect x="20" y="20" width="560" height="560" fill="none" stroke="#729c79" strokeWidth="2" strokeDasharray="6 5" opacity=".6"/>
     <DrawReserved show={show}/>
-    <PlacementDrawing placements={placements} selected={selected}/>
+    <PlacementDrawing placements={placements} selected={selected} templates={templates}/>
     <g fontFamily="Arial,sans-serif" fill="#386a52" fontSize="12" fontWeight="700" opacity=".85">
      <text x="22" y="355">TRANSIT / EMERGENCY ROUTE</text>
      <text x="360" y="35">N ↑</text>
@@ -84,8 +84,8 @@ function ComposerMap({placements,selected,onSlot,tool,rotation,show}){
    {slots.map(s=><button key={s.id} type="button"
     className={'district-map-slot '+(s.existing?'occupied':s.ok?'available':'restricted')+(s.existing?.id===selected?' selected':'')}
     style={{left:(s.x/600*100)+'%',top:(s.y/600*100)+'%'}}
-    title={s.existing?'Select '+BUILDINGS[s.existing.template].name:s.ok?'Place '+BUILDINGS[tool].name:s.reason}
-    aria-label={s.existing?'Select building '+s.existing.id:s.ok?'Place '+BUILDINGS[tool].name+' at column '+(s.col+1)+', row '+(s.row+1):'Explain unavailable location at column '+(s.col+1)+', row '+(s.row+1)}
+    title={s.existing?'Select '+templates[s.existing.template].name:s.ok?'Place '+templates[tool].name:s.reason}
+    aria-label={s.existing?'Select building '+s.existing.id:s.ok?'Place '+templates[tool].name+' at column '+(s.col+1)+', row '+(s.row+1):'Explain unavailable location at column '+(s.col+1)+', row '+(s.row+1)}
     aria-pressed={s.existing?.id===selected}
     onClick={()=>onSlot(s)}>
       {s.existing?String(placements.findIndex(p=>p.id===s.existing.id)+1):s.ok?'+':'·'}
@@ -102,6 +102,7 @@ export default function DistrictComposer(){
  const {snapshot,setDistrict:setDistrictId,setDistrictLayout}=useWorkspace();
  const districtId=snapshot.districtId;
  const layouts=snapshot.layouts;
+ const prototypes=snapshot.prototypes;
  const [tool,setTool]=useState('courtyard');
  const [rotation,setRotation]=useState(0);
  const [selected,setSelected]=useState(null);
@@ -110,24 +111,24 @@ export default function DistrictComposer(){
  const counter=useRef(1000);
  const layout=layouts[districtId]||[];
  const active=layout.find(p=>p.id===selected);
- const metrics=useMemo(()=>composeMetrics(layout),[layout]);
+ const metrics=useMemo(()=>composeMetrics(layout,prototypes),[layout,prototypes]);
  const district=DISTRICTS.find(d=>d.id===districtId);
  const updateLayout=(next,msg)=>{setDistrictLayout(districtId,next);setNotice(msg);};
  function changeDistrict(id){setDistrictId(id);setSelected(null);setNotice('Selected '+DISTRICTS.find(d=>d.id===id).name+'. Each district is a separate editable reference sketch.');}
  function onSlot(slot){
-  if(slot.existing){setSelected(slot.existing.id);setNotice('Selected '+BUILDINGS[slot.existing.template].name+'. Use movement and rotation tools below.');return;}
+  if(slot.existing){setSelected(slot.existing.id);setNotice('Selected '+prototypes[slot.existing.template].name+'. Use movement and rotation tools below.');return;}
   let identifier;
   do{identifier=districtId+'-building-'+(++counter.current);}while(layout.some(p=>p.id===identifier));
   const candidate={id:identifier,template:tool,col:slot.col,row:slot.row,rotation};
-  const test=validatePlacement(layout,candidate);
+  const test=validatePlacement(layout,candidate,prototypes);
   if(!test.ok){setNotice('Cannot place here: '+test.reasons.join('; '));return;}
-  updateLayout([...layout,candidate],BUILDINGS[tool].name+' placed in row '+(slot.row+1)+', column '+(slot.col+1)+'.');
+  updateLayout([...layout,candidate],prototypes[tool].name+' placed in row '+(slot.row+1)+', column '+(slot.col+1)+'.');
   setSelected(candidate.id);
  }
  function transform(patch){
   if(!active)return;
   const candidate={...active,...patch};
-  const check=validatePlacement(layout,candidate);
+  const check=validatePlacement(layout,candidate,prototypes);
   if(!check.ok){setNotice('Change blocked: '+check.reasons.join('; '));return;}
   updateLayout(layout.map(p=>p.id===active.id?candidate:p),'Building updated. All constraints still pass in the schematic.');
  }
@@ -136,9 +137,9 @@ export default function DistrictComposer(){
   updateLayout(layout.filter(p=>p.id!==active.id),'Selected building removed.');
   setSelected(null);
  }
- function resetDemo(){updateLayout(seedLayout(districtId),'Loaded an illustrative neighborhood layout.');setSelected(null);}
+ function resetDemo(){updateLayout(seedLayout(districtId,prototypes),'Loaded an illustrative neighborhood layout.');setSelected(null);}
  function clear(){updateLayout([],'Canvas cleared. All reserved corridors and review constraints remain active.');setSelected(null);}
- function exportJSON(){saveBlob('CANOPY-'+districtId+'-concept-district.json',districtExport(districtId,layout),'application/json');setNotice('Export created and clearly marked as a non-georeferenced concept.');}
+ function exportJSON(){saveBlob('CANOPY-'+districtId+'-concept-district.json',districtExport(districtId,layout,prototypes),'application/json');setNotice('Export created and clearly marked as a non-georeferenced concept.');}
  function changeLayer(k){setShow(s=>({...s,[k]:!s[k]}));}
  const measures=[
   {label:'Conceptual residents',value:format(metrics.estimatedResidents),note:'Inherited typical occupancy assumptions'},
@@ -171,7 +172,7 @@ export default function DistrictComposer(){
   </div>
   <div className="district-main-grid">
    <div className="district-map-column">
-    <ComposerMap placements={layout} selected={selected} onSlot={onSlot} tool={tool} rotation={rotation} show={show}/>
+    <ComposerMap placements={layout} selected={selected} onSlot={onSlot} tool={tool} rotation={rotation} show={show} templates={prototypes}/>
     <div className="district-map-layer-list">
      {[
       ['ecology','Habitat + wetland'],['food','Food landscapes'],['transit','Transit'],
@@ -181,7 +182,7 @@ export default function DistrictComposer(){
    </div>
    <aside className="district-editor">
     <div className="district-editor-title">BUILDING PALETTE <span>{metrics.buildingCount} PLACED</span></div>
-    <div className="district-palette">{Object.entries(BUILDINGS).map(([key,b])=><button type="button" key={key} className={tool===key?'active':''} aria-pressed={tool===key} onClick={()=>{setTool(key);setSelected(null);setNotice(b.name+' is ready. Choose a + cell to place it.');}}>
+    <div className="district-palette">{Object.entries(prototypes).map(([key,b])=><button type="button" key={key} className={tool===key?'active':''} aria-pressed={tool===key} onClick={()=>{setTool(key);setSelected(null);setNotice(b.name+' is ready. Choose a + cell to place it.');}}>
       <i style={{background:TYPES[key].color}}/><span><strong>{b.name}</strong><small>{b.floors} floors · {b.widthM} × {b.depthM} m</small></span>
     </button>)}</div>
     <div className="district-edit-rule"/>
@@ -190,7 +191,7 @@ export default function DistrictComposer(){
     {active?<div className="district-selected">
       <div className="district-edit-rule"/>
       <div className="district-editor-title">SELECTED BLOCK</div>
-      <strong>{BUILDINGS[active.template].name}</strong>
+      <strong>{prototypes[active.template].name}</strong>
       <p>Cell {active.col+1}, {active.row+1} · Rotation {active.rotation}°</p>
       <div className="district-move-controls" role="group" aria-label="Move selected building one grid cell">
        <button type="button" onClick={()=>transform({row:active.row-1})} aria-label="Move north">↑</button>
@@ -206,8 +207,8 @@ export default function DistrictComposer(){
    </aside>
   </div>
   <div className="district-metric-grid">{measures.map(m=><Metric key={m.label} {...m}/>)}</div>
-  <NeighborhoodLab layout={layout} districtId={districtId} selected={selected}/>
-  <InfrastructureLab layout={layout} districtId={districtId} selected={selected}/>
+  <NeighborhoodLab layout={layout} districtId={districtId} selected={selected} templates={prototypes}/>
+  <InfrastructureLab layout={layout} districtId={districtId} selected={selected} templates={prototypes}/>
   <div className="district-interpretation">
    <div><span className="district-overline">COMMUNITY EQUIPMENT / STUDY ONLY</span>
     <h3>One district, more than housing.</h3>
