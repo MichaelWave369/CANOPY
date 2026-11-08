@@ -1,9 +1,15 @@
 import {DISTRICTS} from './model.js';
 import {ENERGY_DEFAULTS,WATER_DEFAULTS,simulateEnergy,simulateWater} from './scenario.js';
 import {seedLayout,validateLayout,composeMetrics} from './district.js';
+import {BUILDINGS,calculateBuilding} from './blueprint.js';
+import {SETBACKS,estimateAtlas} from './atlas.js';
+import {DEFAULT_CAPACITY,evaluateNeighborhood} from './neighborhood.js';
+import {DEFAULT_INFRA,normalizeInfrastructure,runInfrastructure} from './infrastructure.js';
 
-export const WORKSPACE_SCHEMA='canopy.workspace.v1';
-export const STORAGE_KEY='canopy:scenario-workspace:v1';
+export const WORKSPACE_SCHEMA='canopy.workspace.v2';
+export const PREVIOUS_SCHEMA='canopy.workspace.v1';
+export const PREVIOUS_STORAGE_KEY='canopy:scenario-workspace:v1';
+export const STORAGE_KEY='canopy:scenario-workspace:v2';
 export const HISTORY_LIMIT=20;
 export const MAX_IMPORT_CHARS=1024*1024;
 export const WORKSPACE_STATUS='SYNTHETIC / UNVERIFIED / NOT FOR CONSTRUCTION';
@@ -17,6 +23,39 @@ const WATER_LIMITS=Object.freeze({
  treatmentCapacityML:[0,15],eligibleNonpotablePct:[0,60],availableFreshML:[0,15]
 });
 const DISTRICT_IDS=DISTRICTS.map(d=>d.id);
+const COMMUNITY_LIMITS=Object.freeze({schoolSeats:[0,10000],clinicVisitsPerYear:[0,100000],
+ publicRoomSeats:[0,10000],constructionMultiplier:[.5,2]});
+const PROTOTYPE_KEYS=Object.keys(BUILDINGS);
+function validatePrototypes(prototypes){
+ if(!isRecord(prototypes)||Object.keys(prototypes).length!==PROTOTYPE_KEYS.length||
+    Object.keys(prototypes).some(k=>!PROTOTYPE_KEYS.includes(k)))throw new RangeError('Four canonical prototype keys are required');
+ for(const id of PROTOTYPE_KEYS){
+  const base=BUILDINGS[id],value=prototypes[id];
+  if(!isRecord(value)||Object.keys(value).length!==Object.keys(base).length||
+    Object.keys(value).some(k=>!Object.hasOwn(base,k)))throw new RangeError('Unknown/missing prototype fields: '+id);
+  for(const [key,v] of Object.entries(base)){
+   if(typeof value[key]!==typeof v)throw new RangeError('Invalid type for '+id+'.'+key);
+   if(typeof v==='string'&&value[key]!==v&&['name','type','districtId','note'].includes(key))
+    throw new RangeError('Canonical prototype identity fields cannot be changed');
+   if(typeof v==='string'&&key==='material'&&!['timber','mineral','modular'].includes(value[key]))throw new RangeError('Unknown prototype material');
+  }
+  calculateBuilding(value);
+ }
+}
+function validateNewControls(snapshot){
+ validatePrototypes(snapshot.prototypes);
+ if(!Number.isInteger(snapshot.atlasSetbackM)||snapshot.atlasSetbackM<SETBACKS.min||snapshot.atlasSetbackM>SETBACKS.max||
+   (snapshot.atlasSetbackM-SETBACKS.min)%SETBACKS.step!==0)throw new RangeError('Atlas setback outside model increments');
+ checkFields(snapshot.community,COMMUNITY_LIMITS,'Community');
+ if(!isRecord(snapshot.infrastructure)||Object.keys(snapshot.infrastructure).length!==Object.keys(DEFAULT_INFRA).length||
+    Object.keys(snapshot.infrastructure).some(k=>!Object.hasOwn(DEFAULT_INFRA,k)))throw new RangeError('Unknown infrastructure inputs');
+ normalizeInfrastructure(snapshot.infrastructure);
+}
+export function upgradeV1(snapshot){
+ if(!isRecord(snapshot)||Object.keys(snapshot).length!==4||['energy','water','districtId','layouts'].some(k=>!Object.hasOwn(snapshot,k)))throw new RangeError('Invalid v1 snapshot');
+ return {...clone(snapshot),prototypes:clone(BUILDINGS),atlasSetbackM:SETBACKS.reference,
+  community:{...DEFAULT_CAPACITY},infrastructure:{...DEFAULT_INFRA}};
+}
 const isRecord=x=>x!==null&&typeof x==='object'&&!Array.isArray(x)&&Object.getPrototypeOf(x)===Object.prototype;
 const clone=value=>JSON.parse(JSON.stringify(value));
 function checkFields(target,schema,name){
@@ -32,15 +71,18 @@ export function referenceSnapshot(){
   energy:{...ENERGY_DEFAULTS},
   water:{...WATER_DEFAULTS},
   districtId:'garden',
-  layouts:Object.fromEntries(DISTRICTS.map(d=>[d.id,seedLayout(d.id)]))
+  layouts:Object.fromEntries(DISTRICTS.map(d=>[d.id,seedLayout(d.id)])),
+  prototypes:clone(BUILDINGS),atlasSetbackM:SETBACKS.reference,
+  community:{...DEFAULT_CAPACITY},infrastructure:{...DEFAULT_INFRA}
  };
 }
 export function validateSnapshot(snapshot){
  if(!isRecord(snapshot))throw new TypeError('Scenario snapshot must be an object');
- const fields=['energy','water','districtId','layouts'];
+ const fields=['energy','water','districtId','layouts','prototypes','atlasSetbackM','community','infrastructure'];
  if(Object.keys(snapshot).length!==fields.length||fields.some(k=>!Object.hasOwn(snapshot,k)))throw new RangeError('Snapshot keys are missing or unexpected');
  checkFields(snapshot.energy,ENERGY_LIMITS,'Energy');
  checkFields(snapshot.water,WATER_LIMITS,'Water');
+ validateNewControls(snapshot);
  if(!DISTRICT_IDS.includes(snapshot.districtId))throw new RangeError('Unknown selected district');
  if(!isRecord(snapshot.layouts)||Object.keys(snapshot.layouts).length!==DISTRICT_IDS.length||
     Object.keys(snapshot.layouts).some(id=>!DISTRICT_IDS.includes(id)))throw new RangeError('Layouts must include the six canonical districts');
@@ -52,7 +94,7 @@ export function validateSnapshot(snapshot){
       ['id','template','col','row','rotation'].some(k=>!Object.hasOwn(item,k)))throw new RangeError('Malformed building entry in '+id);
    if(typeof item.id!=='string'||!item.id||item.id.length>100)throw new RangeError('Building IDs must be nonempty strings shorter than 101 characters');
   }
-  const assessment=validateLayout(layout);
+  const assessment=validateLayout(layout,snapshot.prototypes);
   if(!assessment.ok)throw new RangeError('Invalid '+id+' layout: '+assessment.problems.slice(0,3).join('; '));
  }
  // All model inputs and District Composer placement constraints were validated above.
@@ -116,8 +158,19 @@ export function parseWorkspace(text){
  const data=JSON.parse(text);
  if(!isRecord(data))throw new TypeError('Workspace file must be an object');
  const {disclaimer,...candidate}=data;
+ if(candidate.schema===PREVIOUS_SCHEMA){
+  if(Object.keys(candidate).length!==5||candidate.status!==WORKSPACE_STATUS||
+     !Array.isArray(candidate.history)||candidate.history.length<1||candidate.history.length>HISTORY_LIMIT)
+   throw new RangeError('Malformed v1 workspace');
+  const migrated={...candidate,schema:WORKSPACE_SCHEMA,history:candidate.history.map(entry=>{
+   if(!isRecord(entry)||Object.keys(entry).length!==3||
+      !['revision','label','snapshot'].every(k=>Object.hasOwn(entry,k)))throw new RangeError('Malformed v1 revision');
+   return {...entry,snapshot:upgradeV1(entry.snapshot)};
+  })};
+  validateWorkspace(migrated);
+  return clone(migrated);
+ }
  validateWorkspace(candidate);
- // Do not trust prototypes or extra fields from external JSON; re-encode validated known fields.
  return clone(candidate);
 }
 export function compareSnapshots(reference,current){
@@ -125,7 +178,12 @@ export function compareSnapshots(reference,current){
  const e0=simulateEnergy(reference.energy),e1=simulateEnergy(current.energy);
  const w0=simulateWater(reference.water),w1=simulateWater(current.water);
  const id=current.districtId;
- const d0=composeMetrics(reference.layouts[id]),d1=composeMetrics(current.layouts[id]);
+ const d0=composeMetrics(reference.layouts[id],reference.prototypes),d1=composeMetrics(current.layouts[id],current.prototypes);
+ const a0=estimateAtlas(reference.atlasSetbackM),a1=estimateAtlas(current.atlasSetbackM);
+ const co0=evaluateNeighborhood(reference.layouts[id],reference.community,reference.prototypes);
+ const co1=evaluateNeighborhood(current.layouts[id],current.community,current.prototypes);
+ const ut0=runInfrastructure(reference.layouts[id],reference.infrastructure,reference.prototypes);
+ const ut1=runInfrastructure(current.layouts[id],current.infrastructure,current.prototypes);
  const n=(key,before,after,unit)=>({key,before,after,delta:Number((after-before).toFixed(3)),unit});
  return {
   districtId:id,
@@ -137,7 +195,12 @@ export function compareSnapshots(reference,current){
    n('Potential reclaimed water',w0.reclaimedML,w1.reclaimedML,'ML/day'),
    n('Buildings in selected district',d0.buildingCount,d1.buildingCount,'buildings'),
    n('Residents in selected district',d0.estimatedResidents,d1.estimatedResidents,'people'),
-   n('District rooftop PV',d0.pvAnnualMWh,d1.pvAnnualMWh,'MWh/year')
+   n('District rooftop PV',d0.pvAnnualMWh,d1.pvAnnualMWh,'MWh/year'),
+   n('District gross floor area',d0.grossFloorAreaM2,d1.grossFloorAreaM2,'m²'),
+   n('Atlas schematic exclusions',a0.excludedPct,a1.excludedPct,'%'),
+   n('School seat shortfall',co0.services.school.gap,co1.services.school.gap,'seats'),
+   n('District peak thermal load',ut0.demands.thermalPeakMW,ut1.demands.thermalPeakMW,'MW'),
+   n('Utility water shortfall',ut0.systems.potable.shortfall,ut1.systems.potable.shortfall,'m³/day')
   ],
   disclaimer:'Deterministic comparisons of synthetic model outputs. Neither snapshot is a measured site or an approved design.'
  };

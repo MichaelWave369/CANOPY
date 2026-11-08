@@ -22,10 +22,10 @@ export function getSlot(col,row){
  if(!Number.isInteger(col)||!Number.isInteger(row)||col<0||col>=CENTERS.length||row<0||row>=CENTERS.length)throw new RangeError('Unknown concept grid cell');
  return SLOTS[row*CENTERS.length+col];
 }
-export function footprint(item){
- if(!item || !Object.hasOwn(BUILDINGS,item.template))throw new RangeError('Unknown building prototype');
+export function footprint(item,templates=BUILDINGS){
+ if(!item || !Object.hasOwn(templates,item.template))throw new RangeError('Unknown building prototype');
  if(![0,90].includes(item.rotation))throw new RangeError('Rotation must be 0 or 90 degrees');
- const slot=getSlot(item.col,item.row),b=BUILDINGS[item.template];
+ const slot=getSlot(item.col,item.row),b=templates[item.template];
  const w=item.rotation===90?b.depthM:b.widthM,h=item.rotation===90?b.widthM:b.depthM;
  return {x:slot.x-w/2,y:slot.y-h/2,w,h,cx:slot.x,cy:slot.y,template:item.template,id:item.id};
 }
@@ -39,13 +39,13 @@ function intersectsEllipse(r,e,pad=0){
 export function exclusionHits(rect){
  return RESERVED.filter(e=>e.kind==='rect'?intersectsRect(rect,e,2):intersectsEllipse(rect,e,2)).map(e=>e.id);
 }
-export function validatePlacement(existing,candidate){
+export function validatePlacement(existing,candidate,templates=BUILDINGS){
  if(!Array.isArray(existing))throw new TypeError('Placements must be an array');
  if(!Number.isInteger(candidate?.col)||!Number.isInteger(candidate?.row)||
     candidate.col<0||candidate.col>=CENTERS.length||candidate.row<0||candidate.row>=CENTERS.length){
    return{ok:false,reasons:['Outside editable 7 × 7 grid'],rect:null};
  }
- const rect=footprint(candidate), reasons=[];
+ const rect=footprint(candidate,templates), reasons=[];
  if(!Number.isInteger(candidate.id) && (typeof candidate.id!=='string'||!candidate.id))reasons.push('Building identifier missing');
  if(rect.x<CANVAS.edgeReserveM||rect.y<CANVAS.edgeReserveM||
     rect.x+rect.w>CANVAS.widthM-CANVAS.edgeReserveM||
@@ -53,28 +53,28 @@ export function validatePlacement(existing,candidate){
  for(const id of exclusionHits(rect))reasons.push('Reserved zone: '+RESERVED.find(z=>z.id===id).label);
  for(const item of existing){
   if(item.id===candidate.id)continue;
-  if(intersectsRect(rect,footprint(item),CANVAS.buildingSeparationM))reasons.push('Too close to '+item.id+' (10 m schematic separation)');
+  if(intersectsRect(rect,footprint(item,templates),CANVAS.buildingSeparationM))reasons.push('Too close to '+item.id+' (10 m schematic separation)');
  }
  return{ok:reasons.length===0,reasons,rect};
 }
-export function validateLayout(layout){
+export function validateLayout(layout,templates=BUILDINGS){
  if(!Array.isArray(layout))throw new TypeError('District layout must be an array');
  const seen=new Set(),problems=[];
  for(const item of layout){
   if(seen.has(item.id))problems.push('Duplicate id '+item.id);
   seen.add(item.id);
-  const result=validatePlacement(layout,item);
+  const result=validatePlacement(layout,item,templates);
   if(!result.ok)problems.push(...result.reasons.map(m=>String(item.id)+': '+m));
  }
  return{ok:problems.length===0,problems};
 }
-export function composeMetrics(layout){
- const valid=validateLayout(layout);
+export function composeMetrics(layout,templates=BUILDINGS){
+ const valid=validateLayout(layout,templates);
  if(!valid.ok)throw new RangeError('Layout needs review: '+valid.problems.join('; '));
  const counts={courtyard:0,terrace:0,maker:0,garden:0};
  let footprintM2=0,grossFloorAreaM2=0,housingUnits=0,estimatedResidents=0,solarAreaM2=0,greenRoofAreaM2=0,pvAnnualMWh=0,electricAnnualMWh=0,totalStraightLineToStopM=0,maximumStraightLineToStopM=0;
  const buildings=layout.map(item=>{
-  const b=BUILDINGS[item.template],q=calculateBuilding(b),rect=footprint(item);
+  const b=templates[item.template],q=calculateBuilding(b),rect=footprint(item,templates);
   counts[item.template]++;
   footprintM2+=q.footprintM2;grossFloorAreaM2+=q.grossFloorAreaM2;
   housingUnits+=q.housingUnits;estimatedResidents+=q.estimatedResidents;solarAreaM2+=q.solarAreaM2;
@@ -100,7 +100,7 @@ export function composeMetrics(layout){
   buildings
  };
 }
-export function seedLayout(districtId='garden'){
+export function seedLayout(districtId='garden',templates=BUILDINGS){
  const choices=[
   [2,1,'courtyard'],[4,1,'terrace'],[5,1,'courtyard'],
   [1,2,'courtyard'],[2,2,'garden'],[4,2,'courtyard'],[5,2,'terrace'],
@@ -113,18 +113,18 @@ export function seedLayout(districtId='garden'){
   const [col,row,type]=choices[i];
   const template=offset>=0&&i%5===0?['courtyard','terrace','garden','maker'][offset%4]:type;
   const p={id:'example-'+districtId+'-'+(i+1),template,col,row,rotation:0};
-  if(validatePlacement(list,p).ok)list.push(p);
+  if(validatePlacement(list,p,templates).ok)list.push(p);
  }
  return list;
 }
-export function districtExport(districtId,layout){
- const metrics=composeMetrics(layout);
+export function districtExport(districtId,layout,templates=BUILDINGS){
+ const metrics=composeMetrics(layout,templates);
  return JSON.stringify({
   schema:COMPOSER_SCHEMA,status:'SCHEMATIC / UNPERMITTED / NOT GIS',
   districtId,canvas:CANVAS,gridCentersMeters:CENTERS,
   warnings:[
    'This is an invented 600 × 600 m neighborhood laboratory and cannot be mapped directly into CANOPY Living Atlas.',
-   'Prototypes reuse fixed Blueprint Studio default dimensions and assumed dwelling yields.',
+   'Prototypes are supplied by the shared City Twin workspace when available; values remain conceptual and unverified.',
    'Reserved schematic zones are not actual setbacks, flood maps, habitats, or legal constraints.',
    'Transit distances are straight-line proxies, not accessible walking routes.',
    'Annual energy totals omit hourly mismatch, lifecycle emissions, export limits and site climate.',
@@ -135,6 +135,6 @@ export function districtExport(districtId,layout){
     solar:'Inherited Blueprint Studio assumed 19% solar capacity factor and default roof shares',
     occupancy:'Inherited per-building default occupancy and use factors',
     transit:'Three illustrative transit stops along an unverified east-west connection'},
-  reservedZones:RESERVED,transitStops:TRANSIT_STOPS,placements:layout,metrics
+  reservedZones:RESERVED,transitStops:TRANSIT_STOPS,placements:layout,prototypes:templates,metrics
  },null,2);
 }

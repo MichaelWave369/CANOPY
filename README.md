@@ -84,6 +84,14 @@ The workspace has deterministic **canopy.workspace.v1** snapshots, revision hist
 
 **Scope:** the independent Blueprint Studio prototype controls, Atlas setback slider, and community/utility-specific capacity sliders are not yet shared. The Evidence Engine draws dynamic values from the shared energy/water/district state while continuing to display static examples for modules not yet connected. Browser local storage is neither collaborative cloud storage nor a tamper-proof audit log. See the [shared scenario contract](docs/SHARED-SCENARIOS.md).
 
+## Mission Nine: Unified City Twin (v2)
+
+CANOPY's **Unified City Twin** extends the Shared Scenario Core with a versioned `canopy.workspace.v2` snapshot. Blueprint Studio's four prototype dimensions and program settings, the Living Atlas conceptual riparian setback, community facility capacities, and infrastructure controls now join energy/water and six District Composer layouts in the **same browser-local, undoable history**. Neighborhood, infrastructure, comparisons and the Evidence Engine consume the revised inputs where their models overlap.
+
+**Safeguards:** a prototype update is rejected if its proposed rectangle would conflict with an existing fictional district reserve or another building; old v1 exports and local browser workspaces migrate to v2 by adding explicitly default-valued new fields. The v2 interface remains a *coordination model*, not spatially verified GIS: the 12 km² Atlas and 36 ha district example have unrelated synthetic coordinates. No field observations, legal approvals, engineering certifications or real financial quotes are implied.
+
+The model does not yet provide true 3D, photogrammetry, BIM export, validated utility hydraulics or time-calibrated environmental sensing. See [City Twin v2 specification](docs/UNIFIED-CITY-TWIN.md).
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
@@ -98,6 +106,7 @@ The workspace has deterministic **canopy.workspace.v1** snapshots, revision hist
 - [Infrastructure Nervous System](docs/INFRASTRUCTURE.md): topology, hypothetical plant capacities, supply and drainage balances, failures and limits
 - [Evidence Engine](docs/EVIDENCE-ENGINE.md): source-linked model claims, status safeguards, real-world evidence gates and reproducible baseline export
 - [Shared Scenario Core](docs/SHARED-SCENARIOS.md): versioned reference inputs, scenario history, local persistence and cross-model lineage
+- [Unified City Twin v2](docs/UNIFIED-CITY-TWIN.md): expanded shared state, synchronized prototype impacts, strict validation and backward-compatible migration
 
 ## Principles
 

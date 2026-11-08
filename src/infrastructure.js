@@ -73,13 +73,13 @@ export function nearestHub(point){
   return !best||d<best.distanceM-1e-9?{id:n.id,distanceM:d}:best;
  },null);
 }
-export function districtUtilityLoads(layout,config=DEFAULT_INFRA){
- if(!validateLayout(layout).ok)throw new RangeError('Invalid district layout');
+export function districtUtilityLoads(layout,config=DEFAULT_INFRA,templates=BUILDINGS){
+ if(!validateLayout(layout,templates).ok)throw new RangeError('Invalid district layout');
  const settings=normalizeInfrastructure(config);
  const nodes=Object.fromEntries(NODES.map(n=>[n.id,{water:0,sewer:0,thermal:0,buildings:0}]));
  let grossWaterM3d=0,sewerInfluentM3d=0,thermalPeakMW=0,totalConnectionM=0;
  const buildings=layout.map(item=>{
-  const b=BUILDINGS[item.template],q=calculateBuilding(b),p=footprint(item);
+  const b=templates[item.template],q=calculateBuilding(b),p=footprint(item,templates);
   const nonresM2=q.grossFloorAreaM2*(1-b.residentialShare/100);
   const waterM3d=q.estimatedResidents*.11+nonresM2*.004;
   const sewerM3d=waterM3d*.82;
@@ -149,8 +149,8 @@ function edmondsKarp(demandByNode,plantCapacity,commodity,failedLink,stormHours=
   method:'Single-commodity maximum-flow graph on hypothetical two-way links; NOT hydraulic, thermal, pump, slope, pressure or time-dependent simulation'
  };
 }
-export function runInfrastructure(layout,input=DEFAULT_INFRA){
- const load=districtUtilityLoads(layout,input),s=load.settings;
+export function runInfrastructure(layout,input=DEFAULT_INFRA,templates=BUILDINGS){
+ const load=districtUtilityLoads(layout,input,templates),s=load.settings;
  const wastewater=edmondsKarp(Object.fromEntries(NODES.map(n=>[n.id,load.nodes[n.id].sewer])),s.wastewaterPlantM3d,'sewer',s.failedLink);
  // Reuse is limited by treated collection; recovery fraction and eligible nonpotable uses.
  const reclaimM3d=Math.min(s.reuseCapacityM3d,wastewater.delivered*.28,load.grossWaterM3d*.30);
@@ -205,10 +205,10 @@ function report(flow){
   method:flow.method
  };
 }
-export function infrastructureExport(districtId,layout,input=DEFAULT_INFRA){
- const results=runInfrastructure(layout,input);
+export function infrastructureExport(districtId,layout,input=DEFAULT_INFRA,templates=BUILDINGS){
+ const results=runInfrastructure(layout,input,templates);
  return JSON.stringify({schema:INFRA_SCHEMA,status:'SYNTHETIC UTILITIES / UNGEOREFERENCED / NOT FOR CONSTRUCTION',
-  districtId,study:{...CANVAS},scenario:results,
+  districtId,study:{...CANVAS},prototypes:templates,scenario:results,
   limitations:[
    'Utility corridor graph is schematic; links have no verified easement or ecological clearance.',
    'Electrical microgrid is independently modeled in the Living Systems Lab, not part of this hydraulic graph.',

@@ -2,6 +2,7 @@ import React,{useMemo,useState} from 'react';
 import {BUILDINGS} from './blueprint.js';
 import {RESERVED,TRANSIT_STOPS,footprint} from './district.js';
 import {DEFAULT_CAPACITY,SERVICES,evaluateNeighborhood,neighborhoodExport} from './neighborhood.js';
+import {useWorkspace} from './WorkspaceContext.jsx';
 import './neighborhood.css';
 
 const money=v=>'$'+(v/1000000).toLocaleString('en-US',{maximumFractionDigits:1})+'M';
@@ -12,10 +13,10 @@ function download(name,text){
  const url=URL.createObjectURL(new Blob([text],{type:'application/json'}));
  const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
-function CorridorMap({layout,focus,route,target}){
+function CorridorMap({layout,focus,route,target,templates=BUILDINGS}){
  const lines=route?.path?.map(p=>p.x+','+p.y).join(' ')||'';
  const selected=layout.find(b=>b.id===focus);
- const start=selected?footprint(selected):null;
+ const start=selected?footprint(selected,templates):null;
  const place=target?.id==='transit'? (route?.id?.startsWith('stop-')?TRANSIT_STOPS[Number(route.id.split('-')[1])]:null):SERVICES.find(s=>s.id===target?.id);
  return <svg className="neighborhood-route-svg" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" role="img"
   aria-label="Fictional neighborhood route study: shaded reserves, prototype buildings, transit stops, and a synthetic pedestrian grid path. Not an accessible sidewalk or route certification.">
@@ -27,7 +28,7 @@ function CorridorMap({layout,focus,route,target}){
   <path d="M0 300H600" stroke="#557b67" strokeWidth="2" strokeDasharray="6 5"/>
   <path d="M300 0V600" stroke="#8ba68f" strokeWidth="2" strokeDasharray="3 8"/>
   {layout.map((b,i)=>{
-   const r=footprint(b),proto=BUILDINGS[b.template];
+   const r=footprint(b,templates),proto=templates[b.template];
    const cw=b.rotation===90?proto.courtDepthM:proto.courtWidthM,ch=b.rotation===90?proto.courtWidthM:proto.courtDepthM;
    return <g key={b.id}>
     <rect x={r.x} y={r.y} width={r.w} height={r.h} rx="2" fill={COLOR[b.template]} stroke={b.id===focus?'#244f40':'#73958a'} strokeWidth={b.id===focus?3:1.5}/>
@@ -56,11 +57,12 @@ function Setting({label,unit='',value,min,max,step=1,description,onChange}){
   <small>{description}</small>
  </label>;
 }
-export default function NeighborhoodLab({layout,districtId,selected}){
- const [settings,setSettings]=useState({...DEFAULT_CAPACITY});
+export default function NeighborhoodLab({layout,districtId,selected,templates=BUILDINGS}){
+ const {snapshot,setCommunity:setSettings}=useWorkspace();
+ const settings=snapshot.community;
  const [referenceId,setReferenceId]=useState(null);
  const [destination,setDestination]=useState('transit');
- const analysis=useMemo(()=>evaluateNeighborhood(layout,settings),[layout,settings]);
+ const analysis=useMemo(()=>evaluateNeighborhood(layout,settings,templates),[layout,settings,templates]);
  const pickedId=layout.some(x=>x.id===referenceId)?referenceId:layout.some(x=>x.id===selected)?selected:layout[0]?.id;
  const picked=analysis.routes.find(r=>r.buildingId===pickedId);
  const route=destination==='transit'?picked?.closestStop:picked?.services.find(s=>s.id===destination);
@@ -72,13 +74,13 @@ export default function NeighborhoodLab({layout,districtId,selected}){
    <div><span className="district-overline">09 / MISSION FIVE · LIVING NEIGHBORHOOD</span><h3>Design the connections.<br/><em>Account for the people.</em></h3>
     <p>Walkable routes, schools, a clinic, civic rooms, and development phasing built on the District Composer's current layout. No real land or utility service has been verified.</p>
    </div>
-   <button type="button" onClick={()=>download('CANOPY-'+districtId+'-living-neighborhood.json',neighborhoodExport(districtId,layout,settings))}>Export full neighborhood study ↗</button>
+   <button type="button" onClick={()=>download('CANOPY-'+districtId+'-living-neighborhood.json',neighborhoodExport(districtId,layout,settings,templates))}>Export full neighborhood study ↗</button>
   </div>
   <div className="neighborhood-top-alert"><strong>HYPOTHETICAL NETWORK</strong><span>20-meter grid routing avoids the fictional protected zones and building envelopes. It does not demonstrate sidewalk accessibility, crossing safety, public service availability, or fire-apparatus access.</span></div>
   <div className="neighborhood-workspace">
    <div className="neighborhood-route-board">
     <div className="neighborhood-board-label">CONNECTIVITY VIEW / 600 × 600 M / UNGEOREFERENCED</div>
-    <CorridorMap layout={layout} focus={pickedId} route={route} target={activeTarget}/>
+    <CorridorMap layout={layout} focus={pickedId} route={route} target={activeTarget} templates={templates}/>
     <div className="neighborhood-map-key">Dark marker = selected building · Gold marker = destination · Teal = schematic pedestrian route</div>
    </div>
    <div className="neighborhood-configuration">

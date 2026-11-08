@@ -29,7 +29,7 @@ test('canonical reference starts with six independently valid district layouts',
  assert.ok(Object.values(s.layouts).every(l=>l.length>=7));
  assert.equal(validateSnapshot(s),true);
  assert.equal(validateWorkspace(w),true);
- assert.equal(STORAGE_KEY,'canopy:scenario-workspace:v1');
+ assert.equal(STORAGE_KEY,'canopy:scenario-workspace:v2');
 });
 
 test('energy edits are immutable revisions with derived model deltas',()=>{
