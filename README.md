@@ -70,6 +70,12 @@ Adjust hypothetical water supply/reuse, sewage treatment, heating/cooling peak i
 
 **No utility is built or approved.** These are invented network capacities, schematic straight connections and simplified maximum-flow quantities, not hydraulic/heat/flood simulations, operational safety assessments, legally permitted water rights or actual underground easements. See [methods and evidence requirements](docs/INFRASTRUCTURE.md).
 
+## Mission Seven: Evidence Engine
+
+Open **Evidence engine** in the CANOPY explorer to inspect the repository's **default reference** numbers and their origins. Search and filter source-linked records across city planning, electricity, water, ecology, architecture, district composition, community services and utilities. Every entry provides its formula, source module, relevant external evidence requirement and blocking real-world review gate.
+
+The **eight construction evidence gates remain NOT VERIFIED**. The registry validates its own structure and exports a reproducible **canopy.evidence.v1** JSON model ledger, but it does **not** accept independent field evidence or grant permits. Values currently refer to canonical default scenarios, not unsaved edits in other panels. See the [Evidence Engine contract and future verified-data workflow](docs/EVIDENCE-ENGINE.md).
+
 ## Core documents
 
 - [Masterplan](docs/MASTERPLAN.md): urban form, land suitability, districts, mobility and controls
@@ -82,6 +88,7 @@ Adjust hypothetical water supply/reuse, sewage treatment, heating/cooling peak i
 - [District Composer](docs/DISTRICT-COMPOSER.md): multi-building neighborhood composition, constraints, infrastructure assumptions and provenance
 - [Living Neighborhood](docs/LIVING-NEIGHBORHOOD.md): synthetic routed walks, service demand/capacity, emergency access proxies and capital sensitivity
 - [Infrastructure Nervous System](docs/INFRASTRUCTURE.md): topology, hypothetical plant capacities, supply and drainage balances, failures and limits
+- [Evidence Engine](docs/EVIDENCE-ENGINE.md): source-linked model claims, status safeguards, real-world evidence gates and reproducible baseline export
 
 ## Principles
 
